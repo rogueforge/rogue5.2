@@ -256,7 +256,7 @@ command()
 			when CTRL('T') : teleport();
 			when CTRL('E') : msg("food left: %d", food_left);
 			when CTRL('A') : msg("%d things in your pack", inpack);
-			when CTRL('C') : add_pass();
+			when CTRL('K') : add_pass();
 			when CTRL('X') : turn_see(on(player, SEEMONST));
 			when CTRL('N') :
 			{

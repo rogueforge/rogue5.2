@@ -38,7 +38,7 @@ do_passages()
     /*
      * reinitialize room graph description
      */
-    for (r1 = rdes; r1 < &rdes[MAXROOMS]; r1++)
+    for (r1 = rdes; r1 <= &rdes[MAXROOMS-1]; r1++)
     {
 	for (j = 0; j < MAXROOMS; j++)
 	    r1->isconn[j] = FALSE;
@@ -316,9 +316,9 @@ passnum()
 
     pnum = 0;
     newpnum = FALSE;
-    for (rp = passages; rp < &passages[MAXPASS]; rp++)
+    for (rp = passages; rp <= &passages[MAXPASS-1]; rp++)
 	rp->r_nexits = 0;
-    for (rp = rooms; rp < &rooms[MAXROOMS]; rp++)
+    for (rp = rooms; rp <= &rooms[MAXROOMS-1]; rp++)
 	for (i = 0; i < rp->r_nexits; i++)
 	{
 	    newpnum++;

@@ -333,7 +333,7 @@ register coord *cp;
     register struct room *rp;
     register char *fp;
 
-    for (rp = rooms; rp < &rooms[MAXROOMS]; rp++)
+    for (rp = rooms; rp <= &rooms[MAXROOMS-1]; rp++)
 	if (cp->x < rp->r_pos.x + rp->r_max.x && rp->r_pos.x <= cp->x
 	 && cp->y < rp->r_pos.y + rp->r_max.y && rp->r_pos.y <= cp->y)
 	    return rp;

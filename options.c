@@ -64,7 +64,7 @@ option()
     /*
      * Display current values of options
      */
-    for (op = optlist; op < &optlist[NUM_OPTS]; op++)
+    for (op = optlist; op <= &optlist[NUM_OPTS-1]; op++)
     {
 	waddstr(hw, op->o_prompt);
 	(*op->o_putfunc)(op->o_opt);
@@ -74,7 +74,7 @@ option()
      * Set values
      */
     wmove(hw, 0, 0);
-    for (op = optlist; op < &optlist[NUM_OPTS]; op++)
+    for (op = optlist; op <= &optlist[NUM_OPTS-1]; op++)
     {
 	waddstr(hw, op->o_prompt);
 	if ((retval = (*op->o_getfunc)(op->o_opt, hw)))
@@ -307,7 +307,7 @@ register char *str;
 	/*
 	 * Look it up and deal with it
 	 */
-	for (op = optlist; op < &optlist[NUM_OPTS]; op++)
+	for (op = optlist; op <= &optlist[NUM_OPTS-1]; op++)
 	    if (EQSTR(str, op->o_name, len))
 	    {
 		if (op->o_putfunc == put_bool)	/* if option is a boolean */

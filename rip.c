@@ -81,7 +81,7 @@ char monst;
     else
 	return;
 
-    for (scp = top_ten; scp < &top_ten[10]; scp++)
+    for (scp = top_ten; scp <= &top_ten[9]; scp++)
     {
 	scp->sc_score = 0;
 	for (i = 0; i < MAXSTR; i++)
@@ -126,16 +126,15 @@ char monst;
     if (!noscore)
     {
 	uid = getuid();
-
-	for (scp = top_ten; scp <= &top_ten[9]; scp++)
+	for (scp = top_ten; scp && scp <= &top_ten[9]; scp++)
 	    if (amount > scp->sc_score)
 		break;
-            else if (flags != 2 && scp->sc_uid == uid && scp->sc_flags != 2)
-		scp = &top_ten[9] + 1;	/* only one score per nowin uid */
-	if (scp <= &top_ten[9])
+	    else if (flags != 2 && scp->sc_uid == uid && scp->sc_flags != 2)
+		scp = NULL;	/* only one score per nowin uid */
+	if (scp && scp <= &top_ten[9])
 	{
 	    if (flags != 2)
-		for (sc2 = scp; sc2 < &top_ten[10]; sc2++)
+		for (sc2 = scp; sc2 <= &top_ten[9]; sc2++)
 		{
 		    if (sc2->sc_uid == uid && sc2->sc_flags != 2)
 			break;
@@ -163,7 +162,7 @@ char monst;
      * Print the list
      */
     printf("\nTop Ten Rogueists:\nRank\tScore\tName\n");
-    for (scp = top_ten; scp < &top_ten[10]; scp++)
+    for (scp = top_ten; scp <= &top_ten[9]; scp++)
     {
 	int _putchar();
 

@@ -32,11 +32,11 @@ new_level()
      * Clean things off from last level
      */
     clear();
-    for (sp = _level; sp < &_level[MAXCOLS*MAXLINES]; )
+    for (sp = _level; sp <= &_level[(MAXCOLS*MAXLINES)-1]; )
 	*sp++ = ' ';
-    for (sp = _flags; sp < &_flags[MAXCOLS*MAXLINES]; )
+    for (sp = _flags; sp <= &_flags[(MAXCOLS*MAXLINES)-1]; )
 	*sp++ = F_REAL;
-    for (mp = _monst; mp < &_monst[MAXCOLS*MAXLINES]; )
+    for (mp = _monst; mp <= &_monst[(MAXCOLS*MAXLINES)-1]; )
 	*mp++ = NULL;
     clear();
     /*

@@ -251,7 +251,7 @@ command()
 			when CTRL('I') : inventory(lvl_obj, 0);
 			when CTRL('W') : whatis(FALSE);
 			when CTRL('D') : level++; new_level();
-			when CTRL('U') : level--; new_level();
+			when CTRL('U') : if (level > 1) level--; new_level();
 			when CTRL('F') : show_map();
 			when CTRL('T') : teleport();
 			when CTRL('E') : msg("food left: %d", food_left);

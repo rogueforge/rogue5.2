@@ -36,6 +36,10 @@ char **envp;
     char *getpass();
     int lowtime;
 
+#ifdef __DJGPP__
+	_fmode = O_BINARY;
+#endif
+
 #ifndef DUMP
     signal(SIGQUIT, exit);
     signal(SIGILL, exit);

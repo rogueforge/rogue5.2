@@ -230,7 +230,7 @@ debug.djgpp:
 	make CFLAGS="-g3 -DWIZARD" LDFLAGS="-L$(DJDIR)/LIB" CRLIB="-lpdcurses" rogue
 dist.djgpp: 
 	make clean
-	make LDFLAGS="-L$(DJDIR)/LIB" CRLIB="-lpdcurses" rogue
+	make SCOREFILE="C:\\GAMES\\ROGUE52\\ROGUE52.SCR" LDFLAGS="-L$(DJDIR)/LIB" CRLIB="-lpdcurses" rogue
 	groff -t -me -Tascii rogue.me | sed -e 's/.\x08//g' > rogue.doc
 	groff -man -Tascii rogue.6 | sed -e 's/.\x08//g' > rogue.cat
 	rm -f $(DISTNAME)-djgpp.zip

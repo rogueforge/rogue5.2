@@ -139,6 +139,22 @@ char **envp;
     init_materials();			/* Set up materials of wands */
     initscr();				/* Start up cursor package */
 
+    if (COLS < 76)
+    {
+        endwin();
+        printf("\n\nSorry, %s, but your terminal window has too few columns.\n", whoami);
+        printf("Your terminal has %d columns, needs 76.\n",COLS);
+        exit(1);
+    }
+
+    if (LINES < 24)
+    {
+        endwin();
+        printf("\n\nSorry, %s, but your terminal window has too few lines.\n", whoami);
+        printf("Your terminal has %d lines, needs 24.\n",LINES);
+        exit(1);
+    }
+
     setup();
     /*
      * Set up windows

@@ -6,6 +6,7 @@
  */
 
 #include <curses.h>
+#include <string.h>
 #include <ctype.h>
 #include "rogue.h"
 
@@ -13,6 +14,7 @@
  * fix_stick:
  *	Set up a new stick
  */
+void
 fix_stick(cur)
 register THING *cur;
 {
@@ -25,7 +27,7 @@ register THING *cur;
     cur->o_charges = 3 + rnd(5);
     switch (cur->o_which)
     {
-	when WS_HIT:
+	case WS_HIT:
 	    cur->o_hplus = 100;
 	    cur->o_dplus = 3;
 	    cur->o_damage = "1d8";
@@ -38,6 +40,7 @@ register THING *cur;
  * do_zap:
  *	Perform a zap with a wand
  */
+void
 do_zap()
 {
     register THING *obj, *tp;
@@ -59,7 +62,7 @@ do_zap()
     }
     switch (obj->o_which)
     {
-	when WS_LIGHT:
+	case WS_LIGHT:
 	    /*
 	     * Reddy Kilowat wand.  Light up the room
 	     */
@@ -262,6 +265,7 @@ do_zap()
  * drain:
  *	Do drain hit points from player shtick
  */
+void
 drain()
 {
     register THING *mp;
@@ -311,6 +315,7 @@ drain()
  * fire_bolt:
  *	Fire a bolt in a given direction from a specific starting place
  */
+void
 fire_bolt(start, dir, name)
 coord *start, *dir;
 char *name;
@@ -331,7 +336,7 @@ char *name;
     w_names[FLAME] = name;
     switch (dir->y + dir->x)
     {
-	when 0: dirch = '/';
+	case 0: dirch = '/';
 	when 1: case -1: dirch = (dir->y == 0 ? '-' : '|');
 	when 2: case -2: dirch = '\\';
     }

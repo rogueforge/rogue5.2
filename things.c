@@ -6,6 +6,7 @@
  */
 
 #include <curses.h>
+#include <string.h>
 #include <ctype.h>
 #include "rogue.h"
 
@@ -24,7 +25,7 @@ register bool drop;
     pb = prbuf;
     switch (obj->o_type)
     {
-	when SCROLL:
+	case SCROLL:
 	    if (obj->o_count == 1)
 	    {
 		strcpy(pb, "A scroll ");
@@ -152,6 +153,7 @@ register bool drop;
  * drop:
  *	Put something down
  */
+void
 drop()
 {
     register char ch;
@@ -200,6 +202,7 @@ drop()
  * dropcheck:
  *	Do special checks for dropping or unweilding|unwearing|unringing
  */
+int
 dropcheck(op)
 register THING *op;
 {
@@ -261,7 +264,7 @@ new_thing()
      */
     switch (no_food > 3 ? 2 : pick_one(things, NUMTHINGS))
     {
-	when 0:
+	case 0:
 	    cur->o_type = POTION;
 	    cur->o_which = pick_one(p_magic, MAXPOTIONS);
 	when 1:
@@ -320,7 +323,7 @@ new_thing()
 	    cur->o_which = pick_one(r_magic, MAXRINGS);
 	    switch (cur->o_which)
 	    {
-		when R_ADDSTR:
+		case R_ADDSTR:
 		case R_PROTECT:
 		case R_ADDHIT:
 		case R_ADDDAM:
@@ -350,6 +353,7 @@ new_thing()
  * pick_one:
  *	Pick an item out of a list of nitems possible magic items
  */
+int
 pick_one(magic, nitems)
 register struct magic_item *magic;
 int nitems;
@@ -387,6 +391,7 @@ static bool newpage = FALSE;
 
 static char *lastfmt, *lastarg;
 
+void
 discovered()
 {
     register char ch;
@@ -445,6 +450,7 @@ discovered()
 
 #define MAX(a,b,c,d)	(a > b ? (a > c ? (a > d ? a : d) : (c > d ? c : d)) : (b > c ? (b > d ? b : d) : (c > d ? c : d)))
 
+void
 print_disc(type)
 char type;
 {
@@ -497,6 +503,7 @@ char type;
  * set_order:
  *	Set up order for list
  */
+void
 set_order(order, numthings)
 short *order;
 int numthings;
@@ -520,9 +527,13 @@ int numthings;
  *	Add a line to the list of discoveries
  */
 /* VARARGS1 */
-add_line(fmt, arg)
-char *fmt, *arg;
+void
+add_line(char *fmt, ...)
 {
+    char *arg;
+    va_list ap;
+    va_start(ap, fmt);
+
     if (line_cnt == 0)
     {
 	    wclear(hw);
@@ -531,8 +542,8 @@ char *fmt, *arg;
     }
     if (slow_invent)
     {
-	if (*fmt != '\0')
-	    msg(fmt, arg);
+	if ( (fmt != NULL) && (*fmt != '\0'))
+	    msg(fmt, va_arg(ap, char *));
 	line_cnt++;
     }
     else
@@ -549,6 +560,7 @@ char *fmt, *arg;
 	}
 	if (fmt != NULL && !(line_cnt == 0 && *fmt == '\0'))
 	{
+	    arg = va_arg(ap, char *);
 	    mvwprintw(hw, line_cnt++, 0, fmt, arg);
 	    lastfmt = fmt;
 	    lastarg = arg;
@@ -560,6 +572,7 @@ char *fmt, *arg;
  * end_line:
  *	End the list of lines
  */
+void
 end_line()
 {
     if (!slow_invent)
@@ -593,7 +606,7 @@ register char type;
 	sp = &prbuf[strlen(prbuf)];
 	switch (type)
 	{
-	    when POTION: tystr = "potion";
+	    case POTION: tystr = "potion";
 	    when SCROLL: tystr = "scroll";
 	    when RING: tystr = "ring";
 	    when STICK: tystr = "stick";

@@ -7,10 +7,13 @@
 
 #include <curses.h>
 #include <term.h>
+#include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include <signal.h>
 #include <sys/types.h>
 #include <pwd.h>
+#include <unistd.h>
 #include "rogue.h"
 
 static char *rip[] = {
@@ -35,6 +38,7 @@ static char *rip[] = {
  *	Figure score and post it.
  */
 /* VARARGS2 */
+void
 score(amount, flags, monst)
 int amount, flags;
 char monst;
@@ -45,7 +49,8 @@ char monst;
     register FILE *outf;
     register char *killer;
     register int prflags = 0;
-    register int (*fp)(), uid;
+    register void (*fp)(int);
+    register int uid;
 
     static struct sc_ent {
 	char sc_name[MAXSTR];
@@ -60,7 +65,6 @@ char monst;
 	"quit",
 	"A total winner",
     };
-    int	endit();
 
 #if defined(_XOPEN_CURSES) || defined(__NCURSES_H)
     char *SO=tigetstr("smso");
@@ -96,7 +100,8 @@ char monst;
     {
 	printf("[Press return to continue]");
 	fflush(stdout);
-	gets(prbuf);
+	if (fgets(prbuf, 80, stdin) == NULL)
+	    prbuf[0] = '\0';
     }
 #ifdef WIZARD
     if (wizard)
@@ -160,7 +165,7 @@ char monst;
 #else
 		tputs(SO, 0, putchar);
 #endif
-	    printf("%d\t%d\t%s: %s on level %d", scp - top_ten + 1,
+	    printf("%ld\t%d\t%s: %s on level %d", scp - top_ten + 1,
 		scp->sc_score, scp->sc_name, reason[scp->sc_flags],
 		scp->sc_level);
 	    if (scp->sc_flags == 0)
@@ -178,7 +183,8 @@ char monst;
 	    else if (prflags == 2)
 	    {
 		fflush(stdout);
-		gets(prbuf);
+		if (fgets(prbuf, 80, stdin) == NULL)
+		    prbuf[0] = '\0';
 		if (prbuf[0] == 'd')
 		{
 		    for (sc2 = scp; sc2 < &top_ten[9]; sc2++)
@@ -225,6 +231,7 @@ char monst;
  * death:
  *	Do something really fun when he dies
  */
+void
 death(monst)
 register char monst;
 {
@@ -252,7 +259,8 @@ register char monst;
 	mvaddch(16, 32, ' ');
     else
 	mvaddstr(16, 33, vowelstr(killer));
-    mvaddstr(18, 28, sprintf(prbuf, "%2d", lt->tm_year));
+    sprintf(prbuf, "%2d", lt->tm_year);
+    mvaddstr(18, 28, prbuf);
     move(LINES-1, 0);
     refresh();
     score(purse, 0, monst);
@@ -263,6 +271,7 @@ register char monst;
  * total_winner:
  *	Code for a winner
  */
+void
 total_winner()
 {
     register THING *obj;
@@ -296,12 +305,12 @@ total_winner()
     {
 	switch (obj->o_type)
 	{
-	    when FOOD:
+	    case FOOD:
 		worth = 2 * obj->o_count;
 	    when WEAPON:
 		switch (obj->o_which)
 		{
-		    when MACE: worth = 8;
+		    case MACE: worth = 8;
 		    when SWORD: worth = 15;
 		    when CROSSBOW: worth = 30;
 		    when ARROW: worth = 1;
@@ -317,7 +326,7 @@ total_winner()
 	    when ARMOR:
 		switch (obj->o_which)
 		{
-		    when LEATHER: worth = 20;
+		    case LEATHER: worth = 20;
 		    when RING_MAIL: worth = 25;
 		    when STUDDED_LEATHER: worth = 20;
 		    when SCALE_MAIL: worth = 30;
@@ -370,7 +379,7 @@ total_winner()
     }
     mvprintw(c - 'a' + 1, 0,"   %5d  Gold Pieces          ", oldpurse);
     refresh();
-    score(purse, 2);
+    score(purse, 2, 0);
     exit(0);
 }
 
@@ -390,7 +399,7 @@ bool doart;
     article = TRUE;
     switch (monst)
     {
-	when 'a':
+	case 'a':
 	    sp = "arrow";
 	when 'b':
 	    sp = "bolt";

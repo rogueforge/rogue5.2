@@ -1,4 +1,6 @@
 #include <curses.h>
+#include <stdlib.h>
+#include <string.h>
 #include "rogue.h"
 
 /*
@@ -7,12 +9,11 @@
  * @(#)rings.c	4.13 (Berkeley) 1/28/82
  */
 
-char *malloc();
-
 /*
  * ring_on:
  *	Put a ring on a hand
  */
+void
 ring_on()
 {
     register THING *obj;
@@ -83,6 +84,7 @@ ring_on()
  * ring_off:
  *	Take off a ring
  */
+void
 ring_off()
 {
     register int ring;
@@ -120,6 +122,7 @@ ring_off()
  * gethand:
  *	Which hand is the hero interested in?
  */
+int
 gethand()
 {
     register int c;
@@ -148,6 +151,7 @@ gethand()
  * ring_eat:
  *	How much food does this ring use up?
  */
+int
 ring_eat(hand)
 register int hand;
 {
@@ -190,7 +194,7 @@ register THING *obj;
 	return "";
     switch (obj->o_which)
     {
-	when R_PROTECT:
+	case R_PROTECT:
 	case R_ADDSTR:
 	case R_ADDDAM:
 	case R_ADDHIT:

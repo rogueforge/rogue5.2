@@ -32,6 +32,7 @@ static char wand_mons[] = {
  *	Pick a monster to show up.  The lower the level,
  *	the meaner the monster.
  */
+int
 randmonster(wander)
 bool wander;
 {
@@ -54,6 +55,7 @@ bool wander;
  * new_monster:
  *	Pick a new monster and add it to the list
  */
+int
 new_monster(tp, type, cp)
 register THING *tp;
 char type;
@@ -86,7 +88,7 @@ register coord *cp;
     if (type == 'M')
 	switch (rnd(level > 25 ? 9 : 8))
 	{
-	    when 0: tp->t_disguise = GOLD;
+	    case 0: tp->t_disguise = GOLD;
 	    when 1: tp->t_disguise = POTION;
 	    when 2: tp->t_disguise = SCROLL;
 	    when 3: tp->t_disguise = STAIRS;
@@ -102,6 +104,7 @@ register coord *cp;
  * expadd:
  *	Experience to add for this monster's level/hit points
  */
+int
 exp_add(tp)
 register THING *tp;
 {
@@ -122,6 +125,7 @@ register THING *tp;
  * wanderer:
  *	Create a new wandering monster and aim it at the player
  */
+void
 wanderer()
 {
     register int i;
@@ -210,6 +214,7 @@ int y, x;
  * genocide:
  *	Wipe one monster out of existence (for now...)
  */
+void
 genocide()
 {
     register THING *mp;
@@ -254,6 +259,7 @@ genocide()
  * give_pack:
  *	Give a pack to a monster if it deserves one
  */
+void
 give_pack(tp)
 register THING *tp;
 {

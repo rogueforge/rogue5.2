@@ -20,7 +20,8 @@ CFILES=	vers.c extern.c armor.c chase.c command.c daemon.c daemons.c \
 	mach_dep.c
 
 #CFLAGS=		-O
-CFLAGS= -g
+#CFLAGS= -g
+CFLAGS= -O3 -pedantic -DWIZARD -DDUMP
 PROFLAGS=	-p -O
 #LDFLAGS=-i	# For PDP-11's
 LDFLAGS=	# For VAXen
@@ -30,11 +31,12 @@ SF=		-DSCOREFILE='"$(SCOREFILE)"'
 NAMELIST=	/vmunix
 NL=		-DNAMELIST='"$(NAMELIST)"'
 #MACHDEP=	-DMAXLOAD=40 -DLOADAV -DCHECKTIME=4
-MACHDEP=
+MACHDEP= -DMAXLOAD=40 -DLOADAV -DCHECKTIME=4
 BINARY=		distr.out
 
 VGRIND=/usr/ucb/vgrind
 CRLIB=	-lcurses
+CRYPTLIB= -lcrypt
 MISC=	xstr.c Makefile prob.c findpw.c
 LD=	ld
 
@@ -47,7 +49,7 @@ LD=	ld
 	@mv x.o $*.po
 
 .c.o:
-	@echo $(CC) -c $(CFLAGS) $*.c
+#	@echo $(CC) -c $(CFLAGS) $*.c
 	$(CC) -c $(CFLAGS) $*.c
 #	@cc -E $(CFLAGS) $*.c | xstr -c -
 #	@cc -c $(CFLAGS) x.c
@@ -55,11 +57,11 @@ LD=	ld
 
 rogue: a.out
 	cp a.out rogue
-	#strip rogue
+	strip rogue
 
 a.out: xstr $(HDRS) $(OBJS)
 	@rm -f x.c
-	$(CC) $(LDFLAGS) $(OBJS) $(CRLIB)
+	$(CC) $(LDFLAGS) $(OBJS) $(CRLIB) $(CRYPTLIB)
 	size a.out
 
 vers.o:
@@ -87,7 +89,7 @@ install: rogue
 
 distr: rmmach distmod.o mach_dep.o
 	@rm -f x.c
-	$(CC) -s $(LDFLAGS) -o =bin/$(BINARY) distmod.o mach_dep.o $(CRLIB)
+	$(CC) -s $(LDFLAGS) -o =bin/$(BINARY) distmod.o mach_dep.o $(CRLIB) $(CRYPTLIB)
 	size =bin/$(BINARY)
 
 rmmach:
@@ -98,7 +100,7 @@ distmod.o: $(DOBJS) xs.o
 	-$(LD) -r -x -o distmod.o xs.o $(DOBJS)
 
 findpw: findpw.c
-	$(CC) -s -o findpw findpw.c
+	$(CC) -s -o findpw findpw.c $(CRYPTLIB)
 
 prob: prob.o extern.o xs.o
 	$(CC) -O -o prob prob.o extern.o xs.o
@@ -108,7 +110,7 @@ prob.o: prob.c rogue.h
 
 p.out:	$(HDRS) $(POBJS) xs.po
 	@rm -f x.c
-	$(CC) $(PROFLAGS) $(LDFLAGS) -o p.out xs.po $(POBJS) $(CRLIB)
+	$(CC) $(PROFLAGS) $(LDFLAGS) -o p.out xs.po $(POBJS) $(CRLIB) $(CRYPTLIB)
 	size p.out
 
 vers.po:

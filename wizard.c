@@ -7,6 +7,8 @@
  */
 
 #include <curses.h>
+#include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
 #include "rogue.h"
 
@@ -14,6 +16,7 @@
  * whatis:
  *	What a certin object is
  */
+void
 whatis(insist)
 bool insist;
 {
@@ -36,7 +39,7 @@ bool insist;
 
     switch (obj->o_type)
     {
-        when SCROLL:
+        case SCROLL:
 	    s_know[obj->o_which] = TRUE;
 	    if (s_guess[obj->o_which])
 	    {
@@ -78,6 +81,7 @@ bool insist;
  * create_obj:
  *	Wizard command for getting anything he wants
  */
+void
 create_obj()
 {
     register THING *obj;
@@ -148,6 +152,7 @@ create_obj()
  * telport:
  *	Bamf the hero someplace else
  */
+int
 teleport()
 {
     register int rm;
@@ -192,6 +197,7 @@ teleport()
  * passwd:
  *	See if user knows password
  */
+int
 passwd()
 {
     register char *sp, c;
@@ -225,6 +231,7 @@ passwd()
  * show_map:
  *	Print out the map for the wizard
  */
+void
 show_map()
 {
     register int y, x, real;

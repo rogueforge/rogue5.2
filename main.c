@@ -11,15 +11,22 @@
  */
 
 #include <curses.h>
+#include <stdlib.h>
+#include <string.h>
 #include <signal.h>
 #include <pwd.h>
+#include <unistd.h>
+#include <wait.h>
+#include <time.h>
 #include "rogue.h"
 
 /*
  * main:
  *	The main program, of course
  */
+int
 main(argc, argv, envp)
+int argc;
 char **argv;
 char **envp;
 {
@@ -27,20 +34,26 @@ char **envp;
     register struct passwd *pw;
     struct passwd *getpwuid();
     char *getpass(), *crypt();
-    int quit(), exit(), lowtime;
+    int lowtime;
 
 #ifndef DUMP
     signal(SIGQUIT, exit);
     signal(SIGILL, exit);
     signal(SIGTRAP, exit);
+#ifdef SIGIOT
     signal(SIGIOT, exit);
+#endif
 #ifdef SIGEMT
     signal(SIGEMT, exit);
 #endif
     signal(SIGFPE, exit);
+#ifdef SIGBUS
     signal(SIGBUS, exit);
+#endif
     signal(SIGSEGV, exit);
+#ifdef SIGSYS
     signal(SIGSYS, exit);
+#endif
 #endif
 
 #ifdef WIZARD
@@ -91,7 +104,7 @@ char **envp;
     if (argc == 2 && strcmp(argv[1], "-s") == 0)
     {
 	noscore = TRUE;
-	score(0, -1);
+	score(0, -1, 0);
 	exit(0);
     }
     init_check();			/* check for legal startup */
@@ -133,10 +146,10 @@ char **envp;
     /*
      * Start up daemons and fuses
      */
-    daemon(doctor, 0, AFTER);
+    start_daemon(doctor, 0, AFTER);
     fuse(swander, 0, WANDERTIME, AFTER);
-    daemon(stomach, 0, AFTER);
-    daemon(runners, 0, AFTER);
+    start_daemon(stomach, 0, AFTER);
+    start_daemon(runners, 0, AFTER);
     playit();
 }
 
@@ -144,7 +157,9 @@ char **envp;
  * endit:
  *	Exit the program abnormally.
  */
-endit()
+void
+endit(sig)
+int sig;
 {
     fatal("Ok, if you want to exit that badly, I'll have to allow it\n");
 }
@@ -153,6 +168,7 @@ endit()
  * fatal:
  *	Exit the program, printing a message.
  */
+void
 fatal(s)
 char *s;
 {
@@ -168,6 +184,7 @@ char *s;
  * rnd:
  *	Pick a very random number.
  */
+int
 rnd(range)
 register int range;
 {
@@ -178,6 +195,7 @@ register int range;
  * roll:
  *	Roll a number of dice
  */
+int
 roll(number, sides)
 register int number, sides;
 {
@@ -192,7 +210,9 @@ register int number, sides;
  * tstp:
  *	Handle stop and start signals
  */
-tstp()
+void
+tstp(sig)
+int sig;
 {
     register int y, x;
     register int oy, ox;
@@ -220,6 +240,7 @@ tstp()
  *	The main loop of the program.  Loop until the game is over,
  *	refreshing things and looking at the proper times.
  */
+void
 playit()
 {
     register char *opts;
@@ -249,14 +270,15 @@ playit()
     oldrp = roomin(&hero);
     while (playing)
 	command();			/* Command execution */
-    endit();
+    endit(0);
 }
 
 /*
  * quit:
  *	Have player make certain, then exit.
  */
-quit()
+void
+quit(int sig)
 {
     register int oy, ox;
 
@@ -274,7 +296,7 @@ quit()
 	mvprintw(LINES - 2, 0, "You quit with %d gold pieces", purse);
 	move(LINES - 1, 0);
 	refresh();
-	score(purse, 1);
+	score(purse, 1, 0);
 	exit(0);
     }
     else
@@ -293,7 +315,8 @@ quit()
  * leave:
  *	Leave quickly, but curteously
  */
-leave()
+void
+leave(int sig)
 {
 #if !defined(_XOPEN_CURSES) && !defined(__NCURSES_H)
     if (!_endwin)
@@ -312,6 +335,7 @@ leave()
  * shell:
  *	Let him escape for a while
  */
+void
 shell()
 {
     register int pid;
@@ -336,14 +360,12 @@ shell()
 	sleep(1);
     if (pid == 0)
     {
-	execl(sh == NULL ? "/bin/sh" : sh, "shell", "-i", 0);
+	execl(sh == NULL ? "/bin/sh" : sh, "shell", "-i", NULL);
 	perror("No shelly");
 	exit(-1);
     }
     else
     {
-	int endit();
-
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
 	while (wait(&ret_status) != pid)

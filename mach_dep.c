@@ -23,10 +23,13 @@
  */
 
 #include <curses.h>
-#include "extern.h"
+#include <stdlib.h>
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include "rogue.h"
 
 #ifdef SCOREFILE
 static char *lockfile = "/tmp/.roguelock";
@@ -40,6 +43,7 @@ static int num_checks;		/* times we've gone over in checkout() */
  * init_check:
  *	Check out too see if it is proper to play the game now
  */
+void
 init_check()
 {
 #if defined(MAXLOAD) || defined(MAXUSERS)
@@ -61,6 +65,7 @@ init_check()
  *	Open up the score file for future use, and then
  *	setuid(getuid()) in case we are running setuid.
  */
+void
 open_score()
 {
 #ifdef SCOREFILE
@@ -68,21 +73,18 @@ open_score()
 #else
     fd = -1;
 #endif
-    setuid(getuid());
-    setgid(getgid());
+    if (setuid(getuid()) == 0)
+        if (setgid(getgid()) == 0)
+            return;
 }
 
 /*
  * setup:
  *	Get starting setup for all games
  */
+void
 setup()
 {
-    int  auto_save(), quit(), endit(), tstp();
-#ifdef CHECKTIME
-    int  checkout();
-#endif
-
     /*
      * make sure that large terminals don't overflow the bounds
      * of the program
@@ -96,14 +98,20 @@ setup()
 #ifndef DUMP
     signal(SIGILL, auto_save);
     signal(SIGTRAP, auto_save);
+#ifdef SIGIOT
     signal(SIGIOT, auto_save);
+#endif
 #ifdef SIGEMT
     signal(SIGEMT, auto_save);
 #endif
     signal(SIGFPE, auto_save);
+#ifdef SIGBUS
     signal(SIGBUS, auto_save);
+#endif
     signal(SIGSEGV, auto_save);
+#ifdef SIGSYS
     signal(SIGSYS, auto_save);
+#endif
     signal(SIGTERM, auto_save);
 #endif
 
@@ -124,6 +132,7 @@ setup()
  * start_score:
  *	Start the scoring sequence
  */
+void
 start_score()
 {
 #ifdef CHECKTIME
@@ -132,10 +141,11 @@ start_score()
 }
 
 /*
- * symlink:
+ * issymlink:
  *	See if the file has a symbolic link
  */
-symlink(sp)
+int
+issymlink(sp)
 char *sp;
 {
 #ifdef S_IFLNK
@@ -155,6 +165,7 @@ char *sp;
  * too_much:
  *	See if the system is being used too much for this game
  */
+int
 too_much()
 {
 #ifdef MAXLOAD
@@ -175,6 +186,7 @@ too_much()
  * author:
  *	See if a user is an author of the program
  */
+int
 author()
 {
 #ifdef WIZARD
@@ -196,7 +208,8 @@ author()
  * checkout:
  *	Check each CHECKTIME seconds to see if the load is too high
  */
-checkout()
+void
+checkout(int sig)
 {
     static char *msgs[] = {
 	"The load is too high to be playing.  Please leave in %0.1f minutes",
@@ -235,37 +248,56 @@ checkout()
  *	checkout()'s version of msg.  If we are in the middle of a
  *	shell, do a printf instead of a msg to avoid the refresh.
  */
-chmsg(fmt, arg)
-char *fmt;
-int arg;
+void
+chmsg(char *fmt, ...)
 {
+    va_list ap;
+
     if (in_shell)
     {
-	printf(fmt, arg);
+	va_start(ap, fmt);
+	vprintf(fmt, ap);
+	va_end(ap);
 	putchar('\n');
 	fflush(stdout);
     }
     else
-	msg(fmt, arg);
+    {
+	if (*fmt == '\0')
+	{
+	    move(0, 0);
+	    clrtoeol();
+	    mpos = 0;
+	    return;
+	}
+	va_start(ap, fmt);
+	doadd(fmt, ap);
+	va_end(ap);
+	endmsg();
+    }
 }
 #endif
 
 #ifdef LOADAV
 
+#ifdef BSD
 #include <nlist.h>
 
 struct nlist avenrun = {
     "_avenrun"
 };
+#endif
 
 /*
  * loadav:
  *	Looking up load average in core (for system where the loadav()
  *	system call isn't defined
  */
+void
 loadav(avg)
 register double *avg;
 {
+#ifdef BSD
     register int kmem;
 
     if ((kmem = open("/dev/kmem", 0)) < 0)
@@ -280,6 +312,9 @@ bad:
 
     lseek(kmem, (long) avenrun.n_value, 0);
     read(kmem, (char *) avg, 3 * sizeof (double));
+#else
+    getloadavg(avg,3);
+#endif
 }
 #endif
 
@@ -292,6 +327,7 @@ bad:
 
 struct utmp buf;
 
+int
 ucount()
 {
     register struct utmp *up;
@@ -317,6 +353,7 @@ ucount()
  *	lock the score file.  If it takes too long, ask the user if
  *	they care to wait.  Return TRUE if the lock is successful.
  */
+int
 lock_sc()
 {
 #ifdef SCOREFILE
@@ -349,7 +386,8 @@ over:
 	printf("The score file is very busy.  Do you want to wait longer\n");
 	printf("for it to become free so your score can get posted?\n");
 	printf("If so, type \"y\"\n");
-	fgets(prbuf, MAXSTR, stdin);
+	if (fgets(prbuf, MAXSTR, stdin) == NULL)
+	    prbuf[0] = '\0';
 	if (prbuf[0] == 'y')
 	    for (;;)
 	    {
@@ -377,6 +415,7 @@ over:
  * unlock_sc:
  *	Unlock the score file
  */
+void
 unlock_sc()
 {
 #ifdef SCOREFILE
@@ -388,6 +427,7 @@ unlock_sc()
  * flush_type:
  *	Flush typeahead for traps, etc.
  */
+void
 flush_type()
 {
     register int flag;

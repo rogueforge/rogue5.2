@@ -5,6 +5,7 @@
  */
 
 #include <curses.h>
+#include <string.h>
 #include <ctype.h>
 #include "rogue.h"
 
@@ -32,6 +33,7 @@ static struct init_weps {
  * missile:
  *	Fire a missile in a given direction
  */
+void
 missile(ydelta, xdelta)
 int ydelta, xdelta;
 {
@@ -79,6 +81,7 @@ int ydelta, xdelta;
  *	Do the actual motion on the screen done by an object traveling
  *	across the room
  */
+void
 do_motion(obj, ydelta, xdelta)
 register THING *obj;
 register int ydelta, xdelta;
@@ -122,6 +125,7 @@ register int ydelta, xdelta;
  * fall:
  *	Drop an item someplace around here.
  */
+void
 fall(obj, pr)
 register THING *obj;
 register bool pr;
@@ -152,6 +156,7 @@ register bool pr;
  * init_weapon:
  *	Set up the initial goodies for a weapon
  */
+void
 init_weapon(weap, type)
 register THING *weap;
 char type;
@@ -176,6 +181,7 @@ char type;
  * hit_monster:
  *	Does the missile hit the monster?
  */
+int
 hit_monster(y, x, obj)
 register int y, x;
 THING *obj;
@@ -208,6 +214,7 @@ register char type;
  * wield:
  *	Pull out a certain weapon
  */
+void
 wield()
 {
     register THING *obj, *oweapon;
@@ -246,6 +253,7 @@ bad:
  * fallpos:
  *	Pick a random position around the give (y, x) coordinates
  */
+int
 fallpos(pos, newpos, pass)
 register coord *pos, *newpos;
 register bool pass;

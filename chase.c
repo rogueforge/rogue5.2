@@ -5,6 +5,7 @@
  */
 
 #include <curses.h>
+#include <stdlib.h>
 #include "rogue.h"
 
 #define DRAGONSHOT  5	/* one chance in DRAGONSHOT that a dragon will flame */
@@ -15,6 +16,7 @@ coord ch_ret;				/* Where chasing takes you */
  * runners:
  *	Make all the running monsters move.
  */
+void
 runners()
 {
     register THING *tp;
@@ -36,6 +38,7 @@ runners()
  * do_chase:
  *	Make one thing chase another.
  */
+void
 do_chase(th)
 register THING *th;
 {
@@ -173,6 +176,7 @@ over:
  * see_monst:
  *	Return TRUE if the hero can see the monster
  */
+int
 see_monst(mp)
 register THING *mp;
 {
@@ -192,6 +196,7 @@ register THING *mp;
  *	Set a mosnter running after something or stop it from running
  *	(for when it dies)
  */
+void
 runto(runner, spot)
 register coord *runner;
 coord *spot;
@@ -221,6 +226,7 @@ coord *spot;
  *	chasee(ee).  Returns TRUE if we want to keep on chasing later
  *	FALSE if we reach the goal.
  */
+int
 chase(tp, ee)
 THING *tp;
 coord *ee;
@@ -342,6 +348,7 @@ register coord *cp;
  * diag_ok:
  *	Check to see if the move is legal if it is diagonal
  */
+int
 diag_ok(sp, ep)
 register coord *sp, *ep;
 {
@@ -354,6 +361,7 @@ register coord *sp, *ep;
  * cansee:
  *	Returns true if the hero can see a certain coordinate.
  */
+int
 cansee(y, x)
 register int y, x;
 {

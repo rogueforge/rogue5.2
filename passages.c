@@ -5,12 +5,14 @@
  */
 
 #include <curses.h>
+#include <stdlib.h>
 #include "rogue.h"
 
 /*
  * do_passages:
  *	Draw all the passages on a level.
  */
+void
 do_passages()
 {
     register struct rdes *r1, *r2;
@@ -119,6 +121,7 @@ do_passages()
  * conn:
  *	Draw a corridor from a room in a certain direction.
  */
+void
 conn(r1, r2)
 int r1, r2;
 {
@@ -263,6 +266,7 @@ int r1, r2;
  *	Add a door or possibly a secret door.  Also enters the door in
  *	the exits array of the room.
  */
+void
 door(rm, cp)
 register struct room *rm;
 register coord *cp;
@@ -285,6 +289,7 @@ register coord *cp;
  * add_pass:
  *	Add the passages to the current window (wizard command)
  */
+void
 add_pass()
 {
     register int y, x, ch;
@@ -303,6 +308,7 @@ add_pass()
 static int pnum;
 static bool newpnum;
 
+void
 passnum()
 {
     register struct room *rp;
@@ -324,6 +330,7 @@ passnum()
  * numpass:
  *	Number a passageway square and its brethren
  */
+void
 numpass(y, x)
 register int y, x;
 {

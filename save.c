@@ -5,10 +5,15 @@
  */
 
 #include <curses.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <signal.h>
 #include <errno.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <time.h>
 #include "rogue.h"
 
 typedef struct stat STAT;
@@ -18,14 +23,13 @@ extern char version[], encstr[];
 extern bool _endwin;
 #endif
 
-char *sbrk();
-
 STAT sbuf;
 
 /*
  * save_game:
  *	Implement the "save game" command
  */
+int
 save_game()
 {
     register FILE *savef;
@@ -96,7 +100,7 @@ gotfile:
 	}
 	strcpy(file_name, buf);
 	if ((savef = fopen(file_name, "w")) == NULL)
-	    msg(sys_errlist[errno]);	/* fake perror() */
+	    msg(strerror(errno));	/* fake perror() */
     } while (savef == NULL);
 
     /*
@@ -112,7 +116,8 @@ gotfile:
  *	Automatically save a file.  This is used if a HUP signal is
  *	recieved
  */
-auto_save()
+void
+auto_save(int sig)
 {
     register FILE *savef;
     register int i;
@@ -129,6 +134,7 @@ auto_save()
  * save_file:
  *	Write the saved game on the file
  */
+void
 save_file(savef)
 register FILE *savef;
 {
@@ -149,7 +155,7 @@ register FILE *savef;
 #if !defined(_XOPEN_CURSES) && !defined(__NCURSES_H)
     _endwin = TRUE;
 #endif
-    encwrite(version, sbrk(0) - version, savef);
+    encwrite(version, (char *) sbrk(0) - version, savef);
     fclose(savef);
 }
 
@@ -158,6 +164,7 @@ register FILE *savef;
  *	Restore a saved game from a file with elaborate checks for file
  *	integrity from cheaters
  */
+int
 restore(file, envp)
 register char *file;
 char **envp;
@@ -188,7 +195,7 @@ char **envp;
 	return FALSE;
     }
     fstat(inf, &sbuf2);
-    syml = symlink(file);
+    syml = issymlink(file);
     if (
 #ifdef WIZARD
 	!wizard &&
@@ -208,7 +215,11 @@ char **envp;
     }
 
     fflush(stdout);
-    brk(version + sbuf2.st_size);
+    if (brk(version + sbuf2.st_size))
+    {
+	printf("Sorry, not enough memory to load saved game.\n");
+	return FALSE;
+    }
     lseek(inf, 0L, 0);
     encread(version, (unsigned int) sbuf2.st_size, inf);
     /*
@@ -275,6 +286,7 @@ char **envp;
  * encwrite:
  *	Perform an encrypted write
  */
+void
 encwrite(start, size, outf)
 register char *start;
 unsigned int size;
@@ -296,6 +308,7 @@ register FILE *outf;
  * encread:
  *	Perform an encrypted read
  */
+int
 encread(start, size, inf)
 register char *start;
 unsigned int size;

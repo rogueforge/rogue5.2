@@ -5,12 +5,14 @@
  */
 
 #include <curses.h>
+#include <stdlib.h>
 #include "rogue.h"
 
 /*
  * detach:
  *	Takes an item out of whatever linked list it might be in
  */
+void
 _detach(list, item)
 register THING **list, *item;
 {
@@ -26,6 +28,7 @@ register THING **list, *item;
  * _attach:
  *	add an item to the head of a list
  */
+void
 _attach(list, item)
 register THING **list, *item;
 {
@@ -47,6 +50,7 @@ register THING **list, *item;
  * _free_list:
  *	Throw the whole blamed thing away
  */
+void
 _free_list(ptr)
 register THING **ptr;
 {
@@ -64,6 +68,7 @@ register THING **ptr;
  * discard:
  *	Free up an item
  */
+void
 discard(item)
 register THING *item;
 {
@@ -79,7 +84,6 @@ THING *
 new_item()
 {
     register THING *item;
-    THING *calloc();
 
     if ((item = calloc(1, sizeof *item)) == NULL)
 	msg("ran out of memory after %d items", total);

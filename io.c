@@ -5,8 +5,10 @@
  */
 
 #include <curses.h>
+#include <string.h>
 #include <ctype.h>
 #include <stdarg.h>
+#include <unistd.h>
 #include "rogue.h"
 
 /*
@@ -17,6 +19,7 @@ static char msgbuf[BUFSIZ];
 static int newpos = 0;
 
 /* VARARGS1 */
+void
 msg(char *fmt, ...)
 {
     va_list ap;
@@ -44,6 +47,7 @@ msg(char *fmt, ...)
  *	Add things to the current message
  */
 /* VARARGS1 */
+void
 addmsg(char *fmt, ...)
 {
     va_list ap;
@@ -58,6 +62,7 @@ addmsg(char *fmt, ...)
  *	Display a new msg (giving him a chance to see the previous one
  *	if it is up there with the --More--)
  */
+void
 endmsg()
 {
     if (save_msg)
@@ -87,6 +92,7 @@ endmsg()
  * doadd:
  *	Perform an add onto the message buffer
  */
+void
 doadd(fmt, args)
 char *fmt;
 va_list args;
@@ -104,7 +110,8 @@ va_list args;
  * step_ok:
  *	Returns true if it is ok to step on ch
  */
-step_ok(ch)
+int
+step_ok(char ch)
 {
     switch (ch)
     {
@@ -122,6 +129,7 @@ step_ok(ch)
  *	Flushes stdout so that screen is up to date and then returns
  *	getchar().
  */
+char
 readchar()
 {
     char c;
@@ -131,7 +139,7 @@ readchar()
     cnt = 0;
     while (read(0, &c, 1) <= 0)
 	if (cnt++ > 100)	/* if we are getting infinite EOFs */
-	    auto_save();	/* save the game */
+	    auto_save(0);	/* save the game */
     return c;
 }
 
@@ -154,6 +162,7 @@ char ch;
  * status:
  *	Display the important stats line.  Keep the cursor where it was.
  */
+void
 status()
 {
     register int oy, ox, temp;
@@ -207,6 +216,7 @@ status()
  * wait_for
  *	Sit around until the guy types the right key
  */
+void
 wait_for(ch)
 register char ch;
 {
@@ -224,6 +234,7 @@ register char ch;
  * show_win:
  *	Function used to display a window and wait before returning
  */
+void
 show_win(scr, message)
 register WINDOW *scr;
 char *message;

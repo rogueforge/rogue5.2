@@ -7,6 +7,8 @@
  */
 
 #include <curses.h>
+#include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
 #include "rogue.h"
 
@@ -26,8 +28,6 @@ struct optstruct {
 };
 
 typedef struct optstruct	OPTION;
-
-int	put_bool(), get_bool(), put_str(), get_str();
 
 OPTION	optlist[] = {
     {"terse",	 "Terse output: ",
@@ -54,6 +54,7 @@ OPTION	optlist[] = {
  * option:
  *	Print and then set options from the terminal
  */
+void
 option()
 {
     register OPTION	*op;
@@ -104,6 +105,7 @@ option()
  * put_bool
  *	Put out a boolean
  */
+int
 put_bool(b)
 bool	*b;
 {
@@ -114,6 +116,7 @@ bool	*b;
  * put_str:
  *	Put out a string
  */
+int
 put_str(str)
 char *str;
 {
@@ -124,6 +127,7 @@ char *str;
  * get_bool:
  *	Allow changing a boolean option and print it out
  */
+int
 get_bool(bp, win)
 bool *bp;
 WINDOW *win;
@@ -175,6 +179,7 @@ WINDOW *win;
  */
 #define MAXINP	50	/* max string to read from terminal or environment */
 
+int
 get_str(opt, win)
 register char *opt;
 WINDOW *win;
@@ -261,6 +266,7 @@ WINDOW *win;
  * get_num:
  *	Get a numeric option
  */
+int
 get_num(opt, win)
 short *opt;
 WINDOW *win;
@@ -282,6 +288,7 @@ WINDOW *win;
  *	being "name=....", with the string being defined up to a comma
  *	or the end of the entire option string.
  */
+void
 parse_opts(str)
 register char *str;
 {
@@ -354,6 +361,7 @@ register char *str;
  * strucpy:
  *	Copy string using unctrl for things
  */
+void
 strucpy(s1, s2, len)
 register char *s1, *s2;
 register int len;

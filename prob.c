@@ -6,10 +6,15 @@
 # define	TRIES	10000
 
 static char *sccsid = "@(#)prob.c	1.3 (Berkeley) 12/17/81";
+extern int m_exp_add(register struct monster *mp);
+extern int m_roll(register unsigned int number, register unsigned int sides);
+extern int m_rnd(register unsigned int range);
 
-main(ac, av)
+int
+main(ac, av, envp)
 int	ac;
 char	**av;
+char **envp;
 {
 	register unsigned int	prob, prob2, exp;
 	register struct monster	*mp;
@@ -17,7 +22,7 @@ char	**av;
 	register unsigned int	max2, min2, hp;
 
 	printf("%17.17s  ----experience--- ----hit points---\n", "");
-	printf("%17.17s  %7s %4s %4s %7s %4s %4s lvl\n", "monster", "avg", "min", "max", "avg", "min", "max", "max hp");
+	printf("%17.17s  %7s %4s %4s %7s %4s %4s lvl\n", "monster", "avg", "min", "max", "avg", "min", "max");
 	seed = 0;
 	for (mp = monsters; mp < &monsters[26]; mp++) {
 		i = TRIES;
@@ -25,13 +30,13 @@ char	**av;
 		min2 = min = 30000;
 		max2 = max = 0;
 		while (i--) {
-			if ((exp = roll(mp->m_stats.s_lvl, 8)) < min2)
+			if ((exp = m_roll(mp->m_stats.s_lvl, 8)) < min2)
 				min2 = exp;
 			if (exp > max2)
 				max2 = exp;
 			prob2 += exp;
 			mp->m_stats.s_maxhp = exp;
-			if ((exp = mp->m_stats.s_exp + exp_add(mp)) < min)
+			if ((exp = mp->m_stats.s_exp + m_exp_add(mp)) < min)
 				min = exp;
 			if (exp > max)
 				max = exp;
@@ -42,7 +47,8 @@ char	**av;
 	}
 }
 
-exp_add(mp)
+int
+m_exp_add(mp)
 register struct monster *mp;
 {
     register unsigned int mod;
@@ -62,14 +68,15 @@ register struct monster *mp;
  * roll:
  *	roll a number of dice
  */
-roll(number, sides)
+int
+m_roll(number, sides)
 register unsigned int number, sides;
 {
     register unsigned int dtotal = 0;
 
     dtotal = number;
     while (number--)
-	dtotal += rnd(sides);
+	dtotal += m_rnd(sides);
     return dtotal;
 }
 
@@ -79,7 +86,8 @@ register unsigned int number, sides;
  */
 
 
-rnd(range)
+int
+m_rnd(range)
 register unsigned int range;
 {
 

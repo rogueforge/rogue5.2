@@ -1,8 +1,29 @@
 static char *sccsid = "@(#)xstr.c	4.1 (Berkeley) 10/1/80";
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
 #include <sys/types.h>
 #include <signal.h>
+#include <unistd.h>
+
+void process(char *name);
+off_t yankstr(register char **cpp);
+int octdigit(int c);
+void inithash(void);
+int fgetNUL(char *obuf, register int rmdr, FILE *file);
+int xgetc(FILE *file);
+off_t hashit(char *str, int new);
+void flushsh(void);
+void found(int new, off_t off, char *str);
+void prstr(register char *cp);
+void xsdotc(void);
+char *savestr(register char *cp);
+void Ignore(char *a);
+void ignorf(void (*a)(int));
+int lastchr(register char *cp);
+int istail(register char *str, register char *of);
+void onintr(int sig);
 
 /*
  * xstr - extract and hash strings in a C program
@@ -13,26 +34,20 @@ static char *sccsid = "@(#)xstr.c	4.1 (Berkeley) 10/1/80";
 
 #define	ignore(a)	Ignore((char *) a)
 
-char	*calloc();
 off_t	tellpt;
-off_t	hashit();
-char	*mktemp();
-int	onintr();
-char	*savestr();
-char	*strcat();
-char	*strcpy();
-off_t	yankstr();
 
 off_t	mesgpt;
-char	*strings =	"strings";
-
+char    *strings = "/tmp/xstrXXXXXX";
+int     stringsfd;
 int	cflg;
 int	vflg;
 int	readstd;
 
-main(argc, argv)
+int
+main(argc, argv, envp)
 	int argc;
 	char *argv[];
+	char *envp[];
 {
 
 	argc--, argv++;
@@ -63,7 +78,17 @@ main(argc, argv)
 	if (cflg || argc == 0 && !readstd)
 		inithash();
 	else
-		strings = mktemp(savestr("/tmp/xstrXXXXXX"));
+	{
+		stringsfd = mkstemp(strings);
+		if (stringsfd)
+		{
+			close(stringsfd);
+		}
+		else
+		{
+			strings[0] = 0;
+		}
+	}
 	while (readstd || argc > 0) {
 		if (freopen("x.c", "w", stdout) == NULL)
 			perror("x.c"), exit(1);
@@ -78,11 +103,12 @@ main(argc, argv)
 	flushsh();
 	if (cflg == 0)
 		xsdotc();
-	if (strings[0] == '/')
-		ignore(unlink(strings));
+	if (stringsfd && strings[0] == '/')
+		unlink(strings);
 	exit(0);
 }
 
+void
 process(name)
 	char *name;
 {
@@ -147,7 +173,7 @@ def:
 		}
 	}
 	if (ferror(stdout))
-		perror("x.c"), onintr();
+		perror("x.c"), onintr(0);
 }
 
 off_t
@@ -200,6 +226,7 @@ out:
 	return (hashit(dbuf, 1));
 }
 
+int
 octdigit(c)
 	char c;
 {
@@ -207,6 +234,7 @@ octdigit(c)
 	return (isdigit(c) && c != '8' && c != '9');
 }
 
+void
 inithash()
 {
 	char buf[BUFSIZ];
@@ -216,27 +244,29 @@ inithash()
 		return;
 	for (;;) {
 		mesgpt = tellpt;
-		if (fgetNUL(buf, sizeof buf, mesgread) == NULL)
+		if (fgetNUL(buf, sizeof buf, mesgread) == 0)
 			break;
 		ignore(hashit(buf, 0));
 	}
-	ignore(fclose(mesgread));
+	fclose(mesgread);
 }
 
+int
 fgetNUL(obuf, rmdr, file)
 	char *obuf;
 	register int rmdr;
 	FILE *file;
 {
-	register c;
+	register int c;
 	register char *buf = obuf;
 
 	while (--rmdr > 0 && (c = xgetc(file)) != 0 && c != EOF)
 		*buf++ = c;
 	*buf++ = 0;
-	return ((feof(file) || ferror(file)) ? NULL : 1);
+	return ((feof(file) || ferror(file)) ? 0 : 1);
 }
 
+int
 xgetc(file)
 	FILE *file;
 {
@@ -279,6 +309,7 @@ hashit(str, new)
 	return (hp->hpt);
 }
 
+void
 flushsh()
 {
 	register int i;
@@ -305,9 +336,10 @@ flushsh()
 					perror(strings), exit(4);
 			}
 		}
-	ignore(fclose(mesgwrit));
+	fclose(mesgwrit);
 }
 
+void
 found(new, off, str)
 	int new;
 	off_t off;
@@ -325,6 +357,7 @@ found(new, off, str)
 	fprintf(stderr, "\n");
 }
 
+void
 prstr(cp)
 	register char *cp;
 {
@@ -341,6 +374,7 @@ prstr(cp)
 			fprintf(stderr, "%c", c);
 }
 
+void
 xsdotc()
 {
 	register FILE *strf = fopen(strings, "r");
@@ -359,7 +393,7 @@ xsdotc()
 			c = getc(strf);
 			if (ferror(strf)) {
 				perror(strings);
-				onintr();
+				onintr(0);
 			}
 			if (feof(strf)) {
 				fprintf(xdotcf, "\n");
@@ -371,8 +405,8 @@ xsdotc()
 	}
 out:
 	fprintf(xdotcf, "};\n");
-	ignore(fclose(xdotcf));
-	ignore(fclose(strf));
+	fclose(xdotcf);
+	fclose(strf);
 }
 
 char *
@@ -384,6 +418,7 @@ savestr(cp)
 	return (strcpy(dp, cp));
 }
 
+void
 Ignore(a)
 	char *a;
 {
@@ -391,13 +426,15 @@ Ignore(a)
 	a = a;
 }
 
+void
 ignorf(a)
-	int (*a)();
+	void (*a)(int);
 {
 
 	a = a;
 }
 
+int
 lastchr(cp)
 	register char *cp;
 {
@@ -407,6 +444,7 @@ lastchr(cp)
 	return (*cp);
 }
 
+int
 istail(str, of)
 	register char *str, *of;
 {
@@ -417,13 +455,14 @@ istail(str, of)
 	return (d);
 }
 
-onintr()
+void
+onintr(int sig)
 {
 
 	ignorf(signal(SIGINT, SIG_IGN));
 	if (strings[0] == '/')
-		ignore(unlink(strings));
-	ignore(unlink("x.c"));
-	ignore(unlink("xs.c"));
+		unlink(strings);
+	unlink("x.c");
+	unlink("xs.c");
 	exit(7);
 }

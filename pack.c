@@ -14,6 +14,7 @@
  *	non-null use it as the linked_list pointer instead of gettting
  *	it off the ground.
  */
+void
 add_pack(obj, silent)
 register THING *obj;
 bool silent;
@@ -190,6 +191,7 @@ picked_up:
  * inventory:
  *	List what is in the pack
  */
+int
 inventory(list, type)
 THING *list;
 int type;
@@ -227,6 +229,7 @@ int type;
  * pick_up:
  *	Add something to characters pack.
  */
+void
 pick_up(ch)
 char ch;
 {
@@ -263,6 +266,7 @@ char ch;
  * picky_inven:
  *	Allow player to inventory a single item
  */
+void
 picky_inven()
 {
     register THING *obj;
@@ -357,6 +361,7 @@ int type;
  * pack_char:
  *	Return which character would address a pack object
  */
+char
 pack_char(obj)
 register THING *obj;
 {
@@ -376,6 +381,7 @@ register THING *obj;
  * money:
  *	Add or subtract gold from the pack
  */
+void
 money(value)
 register int value;
 {

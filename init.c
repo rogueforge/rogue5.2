@@ -5,6 +5,8 @@
  */
 
 #include <curses.h>
+#include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
 #include "rogue.h"
 
@@ -12,6 +14,7 @@
  * init_player:
  *	Roll up the rogue
  */
+void
 init_player()
 {
     register THING *obj;
@@ -241,6 +244,7 @@ static char metal[][10] = {
  * init_things
  *	Initialize the probabilities for types of things
  */
+void
 init_things()
 {
     register struct magic_item *mp;
@@ -256,6 +260,7 @@ init_things()
  * init_colors:
  *	Initialize the potion color scheme for this time
  */
+void
 init_colors()
 {
     register int i, j;
@@ -286,6 +291,7 @@ init_colors()
  */
 #define MAXNAME	40	/* Max number of characters in a name */
 
+void
 init_names()
 {
     register int nsyl;
@@ -326,6 +332,7 @@ init_names()
  * init_stones:
  *	Initialize the ring stone setting scheme for this time
  */
+void
 init_stones()
 {
     register int i, j;
@@ -355,6 +362,7 @@ init_stones()
  * init_materials:
  *	Initialize the construction materials for wands and staffs
  */
+void
 init_materials()
 {
     register int i, j;
@@ -406,6 +414,7 @@ init_materials()
  * badcheck:
  *	Check to see if a series of probabilities sums to 100
  */
+void
 badcheck(name, magic, bound)
 char *name;
 register struct magic_item *magic;

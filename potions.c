@@ -11,6 +11,7 @@
  * quaff:
  *	Quaff a potion from the pack
  */
+void
 quaff()
 {
     register THING *obj, *th;
@@ -38,7 +39,7 @@ quaff()
      */
     switch (obj->o_which)
     {
-	when P_CONFUSE:
+	case P_CONFUSE:
 	    p_know[P_CONFUSE] = TRUE;
 	    if (!on(player, ISHUH))
 	    {
@@ -70,7 +71,7 @@ quaff()
 	    msg("you feel stronger, now.  What bulging muscles!");
 	when P_MFIND:
 	    player.t_flags |= SEEMONST;
-	    fuse(turn_see, TRUE, HUHDURATION, AFTER);
+	    fuse((void (*)(void)) turn_see, TRUE, HUHDURATION, AFTER);
 	    if (mlist == NULL)
 		msg("you have a strange feeling for a moment");
 	    else
@@ -197,6 +198,7 @@ quaff()
  * invis_on:
  *	Turn on the ability to see invisible
  */
+void
 invis_on()
 {
     register THING *th;
@@ -214,6 +216,7 @@ invis_on()
  * see_monst:
  *	Put on or off seeing monsters on this level
  */
+int
 turn_see(turn_off)
 register bool turn_off;
 {

@@ -18,6 +18,7 @@ coord nh;
  * do_run:
  *	Start the hero running
  */
+void
 do_run(ch)
 char ch;
 {
@@ -31,6 +32,7 @@ char ch;
  *	Check to see that a move is legal.  If it is handle the
  * consequences (fighting, picking up, etc.)
  */
+void
 do_move(dy, dx)
 int dy, dx;
 {
@@ -183,6 +185,7 @@ move_stuff:
  * turnref:
  *	Decide whether to refresh at a passage turning or not
  */
+void
 turnref()
 {
     register int index;
@@ -205,6 +208,7 @@ turnref()
  *	Called to illuminate a room.  If it is dark, remove anything
  *	that might move.
  */
+void
 door_open(rp)
 struct room *rp;
 {
@@ -232,6 +236,7 @@ struct room *rp;
  * be_trapped:
  *	The guy stepped on a trap.... Make him pay.
  */
+int
 be_trapped(tc)
 register coord *tc;
 {
@@ -244,7 +249,7 @@ register coord *tc;
     tr = _flags[index] & F_TMASK;
     switch (tr)
     {
-	when T_DOOR:
+	case T_DOOR:
 	    level++;
 	    new_level();
 	    msg("you fell into a trap!");

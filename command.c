@@ -5,6 +5,8 @@
  */
 
 #include <curses.h>
+#include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
 #include "rogue.h"
 
@@ -12,6 +14,7 @@
  * command:
  *	Process the user commands
  */
+void
 command()
 {
     register char ch;
@@ -32,7 +35,7 @@ command()
 	 * set, someone's been poking in memeory
 	 */
 	if (on(player, ISSLOW|ISCANC|ISGREED|ISINVIS|ISMEAN|ISREGEN))
-	    auto_save();
+	    auto_save(0);
 
 	look(TRUE);
 	if (!running)
@@ -109,7 +112,7 @@ command()
 	    }
 	    switch (ch)
 	    {
-		when 'f':
+		case 'f':
 		    if (!on(player, ISBLIND))
 		    {
 			door_stop = TRUE;
@@ -135,7 +138,7 @@ command()
 		count--;
 	    switch (ch)
 	    {
-		when '!' : shell();
+		case '!' : shell();
 		when 'h' : do_move(0, -1);
 		when 'j' : do_move(1, 0);
 		when 'k' : do_move(-1, 0);
@@ -157,7 +160,7 @@ command()
 			after = FALSE;
 		    else
 			missile(delta.y, delta.x);
-		when 'Q' : after = FALSE; quit();
+		when 'Q' : after = FALSE; quit(0);
 		when 'i' : after = FALSE; inventory(pack, 0);
 		when 'I' : after = FALSE; picky_inven();
 		when 'd' : drop();
@@ -242,7 +245,7 @@ command()
 #ifdef WIZARD
 		    if (wizard) switch (ch)
 		    {
-			when '@' : msg("@ %d,%d", hero.y, hero.x);
+			case '@' : msg("@ %d,%d", hero.y, hero.x);
 			when 'C' : create_obj();
 			when CTRL('I') : inventory(lvl_obj, 0);
 			when CTRL('W') : whatis(FALSE);
@@ -333,6 +336,7 @@ command()
  * illcom:
  *	What to do with an illegal command
  */
+void
 illcom(ch)
 char ch;
 {
@@ -346,6 +350,7 @@ char ch;
  * search:
  *	Player gropes about him to find hidden things.
  */
+void
 search()
 {
     register int y, x;
@@ -389,6 +394,7 @@ search()
  * help:
  *	Give single character help, or the whole mess if he wants it
  */
+void
 help()
 {
     register struct h_list *strp = helpstr;
@@ -443,6 +449,7 @@ help()
  * identify:
  *	Tell the player what a certain thing is.
  */
+void
 identify()
 {
     register char ch, *str;
@@ -487,6 +494,7 @@ identify()
  * d_level:
  *	He wants to go down a level
  */
+void
 d_level()
 {
     if (chat(hero.y, hero.x) != STAIRS)
@@ -502,6 +510,7 @@ d_level()
  * u_level:
  *	He wants to go up a level
  */
+void
 u_level()
 {
     if (chat(hero.y, hero.x) == STAIRS)
@@ -523,12 +532,12 @@ u_level()
  * call:
  *	Allow a user to call a potion, scroll, or ring something
  */
+void
 call()
 {
     register THING *obj;
     register char **guess, *elsewise;
     register bool *know;
-    char *malloc();
 
     obj = get_item("call", CALLABLE);
     /*
@@ -538,7 +547,7 @@ call()
 	return;
     switch (obj->o_type)
     {
-	when RING:
+	case RING:
 	    guess = r_guess;
 	    know = r_know;
 	    elsewise = (r_guess[obj->o_which] != NULL ?

@@ -12,6 +12,7 @@
  * read_scroll:
  *	Read a scroll from the pack and do the appropriate thing
  */
+void
 read_scroll()
 {
     register THING *obj;
@@ -40,7 +41,7 @@ read_scroll()
 	cur_weapon = NULL;
     switch (obj->o_which)
     {
-	when S_CONFUSE:
+	case S_CONFUSE:
 	    /*
 	     * Scroll of monster confusion.  Give him that power.
 	     */

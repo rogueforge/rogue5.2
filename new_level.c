@@ -1,4 +1,7 @@
 #include <curses.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <time.h>
 #include "rogue.h"
 
 #define TREAS_ROOM 20	/* one chance in TREAS_ROOM for a treasure room */
@@ -11,6 +14,7 @@
  *
  * @(#)new_level.c	4.19 (Berkeley) 1/12/82
  */
+void
 new_level()
 {
     register int rm, i;
@@ -59,7 +63,7 @@ new_level()
 	if (i++ > 100)
 	{
 	    i = 0;
-	    srand(getpid() + (int) time((long *) NULL));
+	    srand(getpid() + (int) time((time_t *) NULL));
 	}
     } until (_level[index] == FLOOR);
     _level[index] = STAIRS;
@@ -103,6 +107,7 @@ new_level()
  * rnd_room:
  *	Pick a room that is really there
  */
+int
 rnd_room()
 {
     register int rm;
@@ -118,6 +123,7 @@ rnd_room()
  * put_things:
  *	Put potions and scrolls on this level
  */
+void
 put_things()
 {
     register int i;
@@ -187,6 +193,7 @@ put_things()
  */
 #define MAXTRIES 10	/* max number of tries to put down a monster */
 
+void
 treas_room()
 {
     register int nm, index;

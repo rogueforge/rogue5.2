@@ -14,6 +14,7 @@
  * do_rooms:
  *	Create rooms and corridors with a connectivity graph
  */
+void
 do_rooms()
 {
     register int i;
@@ -114,6 +115,7 @@ do_rooms()
  * draw_room:
  *	Draw a box around a room and lay down the floor
  */
+void
 draw_room(rp)
 register struct room *rp;
 {
@@ -141,6 +143,7 @@ register struct room *rp;
  * vert:
  *	Draw a vertical line
  */
+void
 vert(rp, startx)
 register struct room *rp;
 register int startx;
@@ -155,6 +158,7 @@ register int startx;
  * horiz:
  *	Draw a horizontal line
  */
+void
 horiz(rp, starty)
 register struct room *rp;
 int starty;
@@ -169,6 +173,7 @@ int starty;
  * rnd_pos:
  *	Pick a random spot in a room
  */
+void
 rnd_pos(rp, cp)
 register struct room *rp;
 register coord *cp;
@@ -181,6 +186,7 @@ register coord *cp;
  * enter_room:
  *	Code that is executed whenver you appear in a room
  */
+void
 enter_room(cp)
 register coord *cp;
 {
@@ -214,6 +220,7 @@ register coord *cp;
  * leave_room:
  *	Code for when we exit a room
  */
+void
 leave_room(cp)
 register coord *cp;
 {

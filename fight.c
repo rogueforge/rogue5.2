@@ -5,6 +5,8 @@
  */
 
 #include <curses.h>
+#include <string.h>
+#include <stdlib.h>
 #include <ctype.h>
 #include "rogue.h"
 
@@ -17,6 +19,7 @@ long e_levels[] = {
  * fight:
  *	The player attacks the monster.
  */
+int
 fight(mp, mn, weap, thrown)
 register coord *mp;
 char mn;
@@ -89,6 +92,7 @@ bool thrown;
  * attack:
  *	The monster attacks the player
  */
+void
 attack(mp)
 register THING *mp;
 {
@@ -115,7 +119,7 @@ register THING *mp;
 	if (!on(*mp, ISCANC))
 	    switch (mp->t_type)
 	    {
-		when 'R':
+		case 'R':
 		    /*
 		     * If a rust monster hits, you lose armor, unless
 		     * that armor is leather or there is a magic ring
@@ -281,6 +285,7 @@ register THING *mp;
  * swing:
  *	Returns true if the swing hits
  */
+int
 swing(at_lvl, op_arm, wplus)
 int at_lvl, op_arm, wplus;
 {
@@ -294,6 +299,7 @@ int at_lvl, op_arm, wplus;
  * check_level:
  *	Check to see if the guy has gone up a level.
  */
+void
 check_level()
 {
     register int i, add, olevel;
@@ -318,6 +324,7 @@ check_level()
  * roll_em:
  *	Roll several attacks
  */
+int
 roll_em(thatt, thdef, weap, hurl)
 THING *thatt, *thdef, *weap;
 bool hurl;
@@ -451,6 +458,7 @@ bool upper;
  * hit:
  *	Print a message to indicate a succesful hit
  */
+void
 hit(er, ee)
 register char *er, *ee;
 {
@@ -462,7 +470,7 @@ register char *er, *ee;
     else
 	switch (rnd(4))
 	{
-	    when 0: s = " scored an excellent hit on ";
+	    case 0: s = " scored an excellent hit on ";
 	    when 1: s = " hit ";
 	    when 2: s = (er == 0 ? " have injured " : " has injured ");
 	    when 3: s = (er == 0 ? " swing and hit " : " swings and hits ");
@@ -477,6 +485,7 @@ register char *er, *ee;
  * miss:
  *	Print a message to indicate a poor swing
  */
+void
 miss(er, ee)
 register char *er, *ee;
 {
@@ -485,7 +494,7 @@ register char *er, *ee;
     addmsg(prname(er, TRUE));
     switch (terse ? 0 : rnd(4))
     {
-	when 0: s = (er == 0 ? " miss" : " misses");
+	case 0: s = (er == 0 ? " miss" : " misses");
 	when 1: s = (er == 0 ? " swing and miss" : " swings and misses");
 	when 2: s = (er == 0 ? " barely miss" : " barely misses");
 	when 3: s = (er == 0 ? " don't hit" : " doesn't hit");
@@ -500,6 +509,7 @@ register char *er, *ee;
  * save_throw:
  *	See if a creature save against something
  */
+int
 save_throw(which, tp)
 int which;
 THING *tp;
@@ -514,6 +524,7 @@ THING *tp;
  * save:
  *	See if he saves against various nasty things
  */
+int
 save(which)
 register int which;
 {
@@ -531,6 +542,7 @@ register int which;
  * str_plus:
  *	Compute bonus/penalties for strength on the "to hit" roll
  */
+int
 str_plus(str)
 register str_t str;
 {
@@ -549,6 +561,7 @@ register str_t str;
  * add_dam:
  *	Compute additional damage done for exceptionally high or low strength
  */
+ int
  add_dam(str)
  register str_t str;
  {
@@ -573,6 +586,7 @@ register str_t str;
  * raise_level:
  *	The guy just magically went up a level.
  */
+void
 raise_level()
 {
     pstats.s_exp = e_levels[pstats.s_lvl-1] + 1L;
@@ -583,6 +597,7 @@ raise_level()
  * thunk:
  *	A missile hits a monster
  */
+void
 thunk(weap, mname)
 register THING *weap;
 register char *mname;
@@ -601,6 +616,7 @@ register char *mname;
  * bounce:
  *	A missile misses a monster
  */
+void
 bounce(weap, mname)
 register THING *weap;
 register char *mname;
@@ -619,6 +635,7 @@ register char *mname;
  * remove_monster:
  *	Remove a monster from the screen
  */
+void
 remove_monster(mp, tp, waskill)
 register coord *mp;
 register THING *tp;
@@ -646,6 +663,7 @@ bool waskill;
  * is_magic:
  *	Returns true if an object radiates magic
  */
+int
 is_magic(obj)
 register THING *obj;
 {
@@ -669,6 +687,7 @@ register THING *obj;
  * killed:
  *	Called to put a monster to death
  */
+void
 killed(tp, pr)
 register THING *tp;
 bool pr;
@@ -679,7 +698,7 @@ bool pr;
      */
     switch (tp->t_type)
     {
-	when 'F':
+	case 'F':
 	    player.t_flags &= ~ISHELD;
 	    fung_hit = 0;
 	    strcpy(monsters['F'-'A'].m_stats.s_dmg, "000d0");

@@ -1,4 +1,6 @@
 #include <curses.h>
+#include <stdlib.h>
+#include <string.h>
 #include "rogue.h"
 #include <ctype.h>
 
@@ -39,6 +41,7 @@ char type;
  * look:
  *	A quick glance all around the player
  */
+void
 look(wakeup)
 bool wakeup;
 {
@@ -139,7 +142,7 @@ bool wakeup;
 	    {
 		switch (runch)
 		{
-		    when 'h':
+		    case 'h':
 			if (x == ex)
 			    continue;
 		    when 'j':
@@ -207,7 +210,8 @@ register int y, x;
 		return op;
     }
 #ifdef WIZARD
-    debug(sprintf(prbuf, "Non-object %d,%d", y, x));
+    sprintf(prbuf, "Non-object %d,%d", y, x);
+    debug(prbuf);
     return NULL;
 #else
     /* NOTREACHED */
@@ -218,6 +222,7 @@ register int y, x;
  * eat:
  *	She wants to eat something, so let her try
  */
+void
 eat()
 {
     register THING *obj;
@@ -263,6 +268,7 @@ eat()
  *	Used to modify the playes strength.  It keeps track of the
  *	highest it has been, just in case
  */
+void
 chg_str(amt)
 register int amt;
 {
@@ -284,6 +290,7 @@ register int amt;
  * add_str:
  *	Perform the actual add, checking upper and lower bound limits
  */
+void
 add_str(sp, amt)
 register str_t *sp;
 int amt;
@@ -298,6 +305,7 @@ int amt;
  * add_haste:
  *	Add a haste to the player
  */
+int
 add_haste(potion)
 bool potion;
 {
@@ -323,6 +331,7 @@ bool potion;
  * aggravate:
  *	Aggravate all the monsters on this level
  */
+void
 aggravate()
 {
     register THING *mi;
@@ -357,6 +366,7 @@ register char *str;
  * is_current:
  *	See if the object is one of the currently used items
  */
+int
 is_current(obj)
 register THING *obj;
 {
@@ -378,6 +388,7 @@ register THING *obj;
  *      Set up the direction co_ordinate for use in varios "prefix"
  *	commands
  */
+int
 get_dir()
 {
     register char *prompt;
@@ -392,7 +403,7 @@ get_dir()
 	gotit = TRUE;
 	switch (readchar())
 	{
-	    when 'h': case'H': delta.y =  0; delta.x = -1;
+	    case 'h': case'H': delta.y =  0; delta.x = -1;
 	    when 'j': case'J': delta.y =  1; delta.x =  0;
 	    when 'k': case'K': delta.y = -1; delta.x =  0;
 	    when 'l': case'L': delta.y =  0; delta.x =  1;
@@ -421,6 +432,7 @@ get_dir()
  * sign:
  *	Return the sign of the number
  */
+int
 sign(nm)
 register int nm;
 {
@@ -434,6 +446,7 @@ register int nm;
  * spread:
  *	Give a spread around a given number (+/- 10%)
  */
+int
 spread(nm)
 register int nm;
 {
@@ -444,6 +457,7 @@ register int nm;
  * call_it:
  *	Call an object something after use.
  */
+void
 call_it(know, guess)
 register bool know;
 register char **guess;

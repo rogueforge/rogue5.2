@@ -281,8 +281,8 @@ register char monst;
 	mvaddch(16, 32, ' ');
     else
 	mvaddstr(16, 33, vowelstr(killer));
-    sprintf(prbuf, "%2d", lt->tm_year);
-    mvaddstr(18, 28, prbuf);
+    sprintf(prbuf, "%2d", 1900+lt->tm_year);
+    mvaddstr(18, 26, prbuf);
     move(LINES-1, 0);
     refresh();
     score(purse, 0, monst);

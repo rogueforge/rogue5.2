@@ -37,16 +37,19 @@ BINARY=		distr.out
 VGRIND=/usr/ucb/vgrind
 CRLIB=	-lcurses
 CRYPTLIB=
-MISC=	xstr.c Makefile prob.c findpw.c
+MISC=	xstr.c Makefile prob.c findpw.c LICENSE rogue.6 rogue.me
 LD=	ld
+RM= rm -f
+TAR= tar
 
 .SUFFIXES: .po
 
 .c.po:
-	@echo $(CC) -c $(PROFLAGS) $*.c
-	@cc -E $(PROFLAGS) $*.c | xstr -c -
-	@cc -c $(PROFLAGS) x.c
-	@mv x.o $*.po
+#	@echo $(CC) -c $(PROFLAGS) $*.c
+	@$(CC) -c $(PROFLAGS) $*.c -o $*.po
+#	@cc -E $(PROFLAGS) $*.c | xstr -c -
+#	@cc -c $(PROFLAGS) x.c
+#	@mv x.o $*.po
 
 .c.o:
 #	@echo $(CC) -c $(CFLAGS) $*.c
@@ -67,7 +70,7 @@ a.out: xstr $(HDRS) $(OBJS)
 vers.o:
 	$(CC) -c $(CFLAGS) vers.c
 
-mach_dep.o:
+mach_dep.o: mach_dep.c
 	$(CC) -c $(CFLAGS) $(SF) $(NL) $(MACHDEP) mach_dep.c
 
 xs.o: strings
@@ -139,7 +142,7 @@ lint:
 	/bin/csh -c "lint -hxbc $(MACHDEP) $(SF) $(NL) $(CFILES) -lcurses > linterrs"
 
 clean:
-	rm -f $(POBJS) $(OBJS) core a.out p.out rogue strings make.out rogue.tar vgrind.* x.c x.o xs.c xs.o linterrs findpw distmod.o xs.po xstr
+	rm -f $(POBJS) $(OBJS) core a.out p.out rogue strings make.out rogue.tar vgrind.* x.c x.o xs.c xs.o linterrs findpw distmod.o xs.po xstr rogue rogue.exe rogue.tar.gz rogue.cat rogue.doc xstr.exe
 
 count:
 	wc -l $(HDRS) $(CFILES)
@@ -161,3 +164,74 @@ vgrind:
 	@csh $(VGRIND) -t -x index > vgrind.out.tbl
 
 cfiles: $(CFILES)
+
+dist.src:
+	make clean
+	tar cf $(DISTNAME)-src.tar $(CFILES) $(HDRS) $(MISC)
+	gzip -f $(DISTNAME)-src.tar
+
+debug.irix:
+	make clean
+	make CC=cc CFLAGS="-woff 1116 -g -DWIZARD" rogue
+dist.irix:
+	make clean
+	make CC=cc CFLAGS="-woff 1116 -O3" rogue
+	tbl rogue.me | nroff -me | colcrt - > rogue.doc
+	nroff -man rogue.6 | colcrt - > rogue.cat
+	tar cf $(DISTNAME)-irix.tar rogue LICENSE rogue.cat rogue.doc
+	gzip -f $(DISTNAME)-irix.tar
+
+debug.aix:
+	make clean
+	make CC=xlc CFLAGS="-qmaxmem=16768 -g -qstrict -DWIZARD" rogue
+dist.aix:
+	make clean
+	make CC=xlc CFLAGS="-qmaxmem=16768 -O3 -qstrict" rogue
+	tbl rogue.me | nroff -me | colcrt - > rogue.doc
+	nroff -man rogue.6 | colcrt - > rogue.cat
+	tar cf $(DISTNAME)-aix.tar rogue LICENSE rogue.cat rogue.doc
+	gzip -f $(DISTNAME)-aix.tar
+
+debug.linux:
+	make clean
+	make CFLAGS="-g3 -DWIZARD" rogue
+dist.linux:
+	make clean
+	make rogue
+	groff -P-c -t -me -Tascii rogue.me | sed -e 's/.\x08//g' > rogue.doc
+	groff -man rogue.6 | sed -e 's/.\x08//g' > rogue.cat
+	tar cf $(DISTNAME)-linux.tar rogue LICENSE rogue.cat rogue.doc
+	gzip -f $(DISTNAME)-linux.tar
+	
+debug.interix:
+	make clean
+	make CFLAGS="-g3 -DWIZARD" rogue
+dist.interix: 
+	make clean
+	make rogue
+	groff -P-b -P-u -t -me -Tascii rogue.me > rogue.doc
+	groff -P-b -P-u -man -Tascii rogue.6 > rogue.cat
+	tar cf $(DISTNAME)-interix.tar rogue LICENSE rogue.cat rogue.doc
+	gzip -f $(DISTNAME)-interix.tar
+	
+debug.cygwin:
+	make clean
+	make CFLAGS="-g3 -DWIZARD" rogue
+dist.cygwin:
+	make clean
+	make rogue
+	groff -P-c -t -me -Tascii rogue.me | sed -e 's/.\x08//g' > rogue.doc
+	groff -P-c -man -Tascii rogue.6 | sed -e 's/.\x08//g' > rogue.cat
+	tar cf $(DISTNAME)-cygwin.tar rogue.exe LICENSE rogue.cat rogue.doc
+	gzip -f $(DISTNAME)-cygwin.tar
+	
+debug.djgpp:
+	make clean
+	make CFLAGS="-g3 -DWIZARD" LDFLAGS="-L$(DJDIR)/LIB" CRLIB="-lpdcurses" rogue
+dist.djgpp: 
+	make clean
+	make LDFLAGS="-L$(DJDIR)/LIB" CRLIB="-lpdcurses" rogue
+	groff -t -me -Tascii rogue.me | sed -e 's/.\x08//g' > rogue.doc
+	groff -man -Tascii rogue.6 | sed -e 's/.\x08//g' > rogue.cat
+	rm -f $(DISTNAME)-djgpp.zip
+	zip $(DISTNAME)-djgpp.zip rogue.exe LICENSE rogue.cat rogue.doc

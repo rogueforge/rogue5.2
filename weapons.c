@@ -147,9 +147,11 @@ register bool pr;
 	attach(lvl_obj, obj);
 	return;
     }
-    discard(obj);
     if (pr)
-	msg("the %s vanishes as it hits the ground", w_names[obj->o_which]);
+	msg("the %s vanishes as it hits the ground", 
+	    (obj->o_type==WEAPON) ? w_names[obj->o_which] : inv_name(obj,TRUE));
+
+    discard(obj);
 }
 
 /*

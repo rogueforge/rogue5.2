@@ -557,6 +557,7 @@ add_line(char *fmt, ...)
 	    wait_for(' ');
 	    clearok(curscr, TRUE);
 	    wclear(hw);
+	    touchwin(stdscr);
 	    newpage = TRUE;
 	    line_cnt = 0;
 	}

@@ -442,6 +442,9 @@ help()
     wprintw(hw, "--Press space to continue--");
     wrefresh(hw);
     wait_for(' ');
+    wmove(stdscr, 0, 0);
+    wclrtoeol(stdscr);
+    touchwin(stdscr);
     clearok(stdscr, TRUE);
     refresh();
 }

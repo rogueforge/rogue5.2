@@ -67,7 +67,7 @@ void take_off(void);
 int waste_time(void);
 /* chase.c */
 void runners(void);
-void do_chase(register THING *th);
+int do_chase(register THING *th);
 int see_monst(register THING *mp);
 void runto(register coord *runner, coord *spot);
 int chase(THING *tp, coord *ee);
@@ -106,7 +106,7 @@ void stomach(void);
 /* extern.c */
 /* fight.c */
 int fight(register coord *mp, int mn, register THING *weap, int thrown);
-void attack(register THING *mp);
+int attack(register THING *mp);
 int swing(int at_lvl, int op_arm, int wplus);
 void check_level(void);
 int roll_em(THING *thatt, THING *thdef, THING *weap, int hurl);

@@ -20,15 +20,19 @@ void
 runners()
 {
     register THING *tp;
+    register THING *ntp;
 
-    for (tp = mlist; tp != NULL; tp = next(tp))
+    for (tp = mlist; tp != NULL; tp = ntp)
     {
+	ntp = next(tp);
 	if (!on(*tp, ISHELD) && on(*tp, ISRUN))
 	{
 	    if (!on(*tp, ISSLOW) || tp->t_turn)
-		do_chase(tp);
+		if (do_chase(tp) == -1)
+		    continue;
 	    if (on(*tp, ISHASTE))
-		do_chase(tp);
+		if (do_chase(tp) == -1)
+		    continue;
 	    tp->t_turn ^= TRUE;
 	}
     }
@@ -38,7 +42,7 @@ runners()
  * do_chase:
  *	Make one thing chase another.
  */
-void
+int
 do_chase(th)
 register THING *th;
 {
@@ -105,7 +109,7 @@ over:
 	    fire_bolt(&th->t_pos, &delta, "flame");
 	    running = FALSE;
 	    count = quiet = 0;
-	    return;
+	    return(0);
 	}
     }
     /*
@@ -117,8 +121,7 @@ over:
     {
 	if (ce(this, hero))
 	{
-	    attack(th);
-	    return;
+	    return ( attack(th) );
 	}
 	else if (ce(this, *th->t_dest))
 	{
@@ -137,7 +140,7 @@ over:
 	}
     }
     else if (th->t_type == 'F')
-	return;
+	return(0);
     mvaddch(th->t_pos.y, th->t_pos.x, th->t_oldch);
     if (!ce(ch_ret, th->t_pos))
     {
@@ -170,6 +173,7 @@ over:
      */
     if (stoprun && ce(th->t_pos, *(th->t_dest)))
 	th->t_flags &= ~ISRUN;
+	return(0);
 }
 
 /*

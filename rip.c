@@ -99,10 +99,13 @@ char monst;
 #endif
 	)
     {
-	printf("[Press return to continue]");
-	fflush(stdout);
-	if (fgets(prbuf, 80, stdin) == NULL)
-	    prbuf[0] = '\0';
+	mvaddstr(LINES-1, 0, "[Press return to continue]");
+	refresh();
+        wgetnstr(stdscr,prbuf,80);
+        move(LINES - 1, 0);
+        clrtoeol();
+        refresh();
+	endwin();
     }
 #ifdef WIZARD
     if (wizard)

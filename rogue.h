@@ -7,6 +7,7 @@
 /*
  * Maximum number of different things
  */
+#define MAXDAEMONS  20
 #define MAXROOMS	9
 #define MAXTHINGS	9
 #define MAXOBJ		9
@@ -279,6 +280,29 @@
  */
 
 /*
+ * Delayed actions
+ *
+ */
+
+struct delayed_action {
+    int d_type;
+    void (*d_func)();
+    int d_arg;
+    int d_time;
+};
+
+extern struct delayed_action d_list[];
+
+/*
+ * Stone info
+ */
+
+typedef struct { 
+    char *st_name;
+    int   st_value;
+} STONE;
+
+/*
  * Help list
  */
 
@@ -329,7 +353,7 @@ struct stats {
     shint s_lvl;			/* Level of mastery */
     shint s_arm;			/* Armor class */
     short s_hpt;			/* Hit points */
-    char *s_dmg;			/* String describing damage done */
+    char s_dmg[16];			/* String describing damage done */
     shint s_maxhp;			/* Max hit points */
 };
 
@@ -349,6 +373,7 @@ union thing {
 	struct stats _t_stats;		/* Physical description */
 	struct room *_t_room;		/* Current room for thing */
 	union thing *_t_pack;		/* What the thing is carrying */
+    int  _t_reserved;
     } _t;
     struct {
 	union thing *_l_next, *_l_prev;	/* Next pointer in link */
@@ -356,8 +381,8 @@ union thing {
 	coord _o_pos;			/* Where it lives on the screen */
 	char *_o_text;			/* What it says if you read it */
 	char _o_launch;			/* What you need to launch it */
-	char *_o_damage;		/* Damage if used like sword */
-	char *_o_hurldmg;		/* Damage if thrown */
+	char _o_damage[8];		/* Damage if used like sword */
+	char _o_hurldmg[8];		/* Damage if thrown */
 	shint _o_count;			/* Count for plural objects */
 	shint _o_which;			/* Which object of a type it is */
 	shint _o_hplus;			/* Plusses to hit */
@@ -382,6 +407,7 @@ typedef union thing THING;
 #define t_stats		_t._t_stats
 #define t_pack		_t._t_pack
 #define t_room		_t._t_room
+#define t_reserved      _t._t_reserved
 #define o_type		_o._o_type
 #define o_pos		_o._o_pos
 #define o_text		_o._o_text
@@ -397,6 +423,7 @@ typedef union thing THING;
 #define o_goldval	o_ac
 #define o_flags		_o._o_flags
 #define o_group		_o._o_group
+#define o_reserved      _o._o_reserved
 
 /*
  * Array containing information on all the various types of mosnters

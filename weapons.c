@@ -164,8 +164,8 @@ char type;
     register struct init_weps *iwp;
 
     iwp = &init_dam[type];
-    weap->o_damage = iwp->iw_dam;
-    weap->o_hurldmg = iwp->iw_hrl;
+    strncpy(weap->o_damage, iwp->iw_dam, 8);
+    strncpy(weap->o_hurldmg, iwp->iw_hrl, 8);
     weap->o_launch = iwp->iw_launch;
     weap->o_flags = iwp->iw_flags;
     if (weap->o_flags & ISMANY)

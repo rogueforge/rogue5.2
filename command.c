@@ -10,6 +10,8 @@
 #include <ctype.h>
 #include "rogue.h"
 
+char countch, direction, newcount = FALSE;
+
 /*
  * command:
  *	Process the user commands
@@ -19,7 +21,6 @@ command()
 {
     register char ch;
     register int ntimes = 1;			/* Number of player moves */
-    static char countch, direction, newcount = FALSE;
 
     if (on(player, ISHASTE))
 	ntimes++;

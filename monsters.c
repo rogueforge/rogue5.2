@@ -5,6 +5,7 @@
  */
 
 #include <curses.h>
+#include <string.h>
 #include "rogue.h"
 #include <ctype.h>
 
@@ -15,13 +16,13 @@
  * the string not to be saved.  Otherwise genocide is lost through
  * saving a game.
  */
-static char lvl_mons[] =  {
+char lvl_mons[] =  {
     'K', 'J', 'B', 'S', 'H', 'E', 'A', 'O', 'Z', 'G', 'L', 'C', 'R',
     'Q', 'N', 'Y', 'T', 'W', 'F', 'I', 'X', 'U', 'M', 'V', 'P', 'D',
     '\0'
 };
 
-static char wand_mons[] = {
+char wand_mons[] = {
     'K', 'J', 'B', 'S', 'H', ' ', 'A', 'O', 'Z', 'G', ' ', 'C', 'R',
     'Q', ' ', 'Y', 'T', 'W', ' ', 'I', 'X', 'U', ' ', 'V', 'P', ' ',
     '\0'
@@ -77,7 +78,7 @@ register coord *cp;
     tp->t_stats.s_lvl = mp->m_stats.s_lvl + lev_add;
     tp->t_stats.s_maxhp = tp->t_stats.s_hpt = roll(tp->t_stats.s_lvl, 8);
     tp->t_stats.s_arm = mp->m_stats.s_arm - lev_add;
-    tp->t_stats.s_dmg = mp->m_stats.s_dmg;
+    strncpy(tp->t_stats.s_dmg,mp->m_stats.s_dmg,16);
     tp->t_stats.s_str = mp->m_stats.s_str;
     tp->t_stats.s_exp = mp->m_stats.s_exp + lev_add * 10 + exp_add(tp);
     tp->t_flags = mp->m_flags;

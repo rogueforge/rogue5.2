@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
+#include <string.h>
 #include "rogue.h"
 
 #define TREAS_ROOM 20	/* one chance in TREAS_ROOM for a treasure room */
@@ -172,7 +173,8 @@ put_things()
 	cur = new_item();
 	attach(lvl_obj, cur);
 	cur->o_hplus = cur->o_dplus = 0;
-	cur->o_damage = cur->o_hurldmg = "0d0";
+	strcpy(cur->o_damage,"0d0");
+	strcpy(cur->o_hurldmg,"0d0");
 	cur->o_ac = 11;
 	cur->o_type = AMULET;
 	/*

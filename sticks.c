@@ -19,10 +19,10 @@ fix_stick(cur)
 register THING *cur;
 {
     if (strcmp(ws_type[cur->o_which], "staff") == 0)
-	cur->o_damage = "2d3";
+	strcpy(cur->o_damage,"2d3");
     else
-	cur->o_damage = "1d1";
-    cur->o_hurldmg = "1d1";
+	strcpy(cur->o_damage,"1d1");
+    strcpy(cur->o_hurldmg,"1d1");
 
     cur->o_charges = 3 + rnd(5);
     switch (cur->o_which)
@@ -30,7 +30,7 @@ register THING *cur;
 	case WS_HIT:
 	    cur->o_hplus = 100;
 	    cur->o_dplus = 3;
-	    cur->o_damage = "1d8";
+	    strcpy(cur->o_damage,"1d8");
 	when WS_LIGHT:
 	    cur->o_charges = 10 + rnd(10);
     }
@@ -182,7 +182,7 @@ do_zap()
 
 	    ws_know[WS_MISSILE] = TRUE;
 	    bolt.o_type = '*';
-	    bolt.o_hurldmg = "1d4";
+	    strcpy(bolt.o_hurldmg,"1d4");
 	    bolt.o_hplus = 100;
 	    bolt.o_dplus = 1;
 	    bolt.o_flags = ISMISL;
@@ -203,12 +203,12 @@ do_zap()
 	    {
 		if (rnd(20) == 0)
 		{
-		    obj->o_damage = "3d8";
+		    strcpy(obj->o_damage,"3d8");
 		    obj->o_dplus = 9;
 		}
 		else
 		{
-		    obj->o_damage = "1d8";
+		    strcpy(obj->o_damage,"1d8");
 		    obj->o_dplus = 3;
 		}
 		fight(&delta, tp->t_type, obj, FALSE);
@@ -330,7 +330,7 @@ char *name;
 
     bolt.o_type = WEAPON;
     bolt.o_which = FLAME;
-    bolt.o_hurldmg = "6d6";
+    strcpy(bolt.o_hurldmg,"6d6");
     bolt.o_hplus = 100;
     bolt.o_dplus = 0;
     w_names[FLAME] = name;

@@ -39,6 +39,24 @@ extern long	seed;
 
 extern WINDOW	*hw;
 
+extern int cNCOLORS, cNMETAL, cNWOOD, cNSTONES;
+
+extern char *rainbow[];
+extern STONE stones[];
+extern char *wood[];
+extern char *metal[];
+
+extern coord ch_ret;
+extern shint countch;
+extern shint direction;
+extern shint newcount;
+extern int   between;
+extern int   num_checks;
+extern char  lvl_mons[27];
+extern char  wand_mons[27];
+extern coord nh;
+extern bool  got_genocide;
+
 /*
  * Function types
  */
@@ -248,6 +266,9 @@ void encwrite(register char *start, unsigned int size, register FILE *outf);
 int encread(register char *start, unsigned int size, register int inf);
 /* scrolls.c */
 void read_scroll(void);
+/* state.c */
+extern int rs_save_file(FILE *savef);
+extern int rs_restore_file(int inf);
 /* sticks.c */
 void fix_stick(register THING *cur);
 void do_zap(void);

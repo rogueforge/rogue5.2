@@ -7,6 +7,8 @@
 #include <curses.h>
 #include "rogue.h"
 
+int between = 0;
+
 /*
  * doctor:
  *	A healing daemon that restors hit points after rest
@@ -56,8 +58,6 @@ swander()
 void
 rollwand()
 {
-    static int between = 0;
-
     if (++between >= 4)
     {
 	if (roll(1, 6) == 4)

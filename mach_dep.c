@@ -36,7 +36,7 @@ static char *lockfile = "/tmp/.roguelock";
 #endif
 
 #ifdef CHECKTIME
-static int num_checks;		/* times we've gone over in checkout() */
+int num_checks;		/* times we've gone over in checkout() */
 #endif
 
 /*

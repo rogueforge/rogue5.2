@@ -380,7 +380,8 @@ bool hurl;
 	    if (weap->o_type == STICK && weap->o_which == WS_HIT
 		&& --weap->o_charges < 0)
 	    {
-		cp = weap->o_damage = "0d0";
+		strcpy(weap->o_damage,"0d0");
+		cp = weap->o_damage;
 		weap->o_hplus = weap->o_dplus = 0;
 		weap->o_charges = 0;
 	    }

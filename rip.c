@@ -51,6 +51,7 @@ char monst;
     register int prflags = 0;
     register void (*fp)(int);
     register int uid;
+    char scoreline[MAXSTR + 100];
 
     static struct sc_ent {
 	char sc_name[MAXSTR];
@@ -110,7 +111,14 @@ char monst;
 	else if (strcmp(prbuf, "edit") == 0)
 	    prflags = 2;
 #endif
-    encread((char *) top_ten, sizeof top_ten, fd);
+    for(i=0; i<10; i++)
+    {
+        encread((char *) &top_ten[i].sc_name, MAXSTR, fd);
+        encread((char *) scoreline, 100, fd);
+        sscanf(scoreline, "%ud %ud %hud %hud %hud", &top_ten[i].sc_flags, 
+            &top_ten[i].sc_uid, &top_ten[i].sc_monster, &top_ten[i].sc_score,
+            &top_ten[i].sc_level);
+    }
     /*
      * Insert her in list if need be
      */
@@ -118,12 +126,13 @@ char monst;
     if (!noscore)
     {
 	uid = getuid();
-	for (scp = top_ten; scp < &top_ten[10]; scp++)
+
+	for (scp = top_ten; scp <= &top_ten[9]; scp++)
 	    if (amount > scp->sc_score)
 		break;
-	    else if (flags != 2 && scp->sc_uid == uid && scp->sc_flags != 2)
-		scp = &top_ten[10];	/* only one score per nowin uid */
-	if (scp < &top_ten[10])
+            else if (flags != 2 && scp->sc_uid == uid && scp->sc_flags != 2)
+		scp = &top_ten[9] + 1;	/* only one score per nowin uid */
+	if (scp <= &top_ten[9])
 	{
 	    if (flags != 2)
 		for (sc2 = scp; sc2 < &top_ten[10]; sc2++)
@@ -218,8 +227,19 @@ char monst;
     {
 	if (lock_sc())
 	{
+            int i;
+
 	    fp = signal(SIGINT, SIG_IGN);
-	    encwrite((char *) top_ten, sizeof top_ten, outf);
+
+            for(i=0; i<10; i++)
+            {
+                encwrite((char *) &top_ten[i].sc_name, MAXSTR, outf);
+                sprintf(scoreline," %d %d %hd %hd %hd \n",
+                    top_ten[i].sc_flags, top_ten[i].sc_uid, 
+                    top_ten[i].sc_monster, top_ten[i].sc_score,
+                    top_ten[i].sc_level);
+                encwrite((char *) scoreline, 100, outf);
+            }
 	    unlock_sc();
 	    signal(SIGINT, fp);
 	}

@@ -48,17 +48,18 @@ LD=	ld
 
 .c.o:
 	@echo $(CC) -c $(CFLAGS) $*.c
-	@cc -E $(CFLAGS) $*.c | xstr -c -
-	@cc -c $(CFLAGS) x.c
-	@mv x.o $*.o
+	$(CC) -c $(CFLAGS) $*.c
+#	@cc -E $(CFLAGS) $*.c | xstr -c -
+#	@cc -c $(CFLAGS) x.c
+#	@mv x.o $*.o
 
 rogue: a.out
 	cp a.out rogue
-	strip rogue
+	#strip rogue
 
-a.out: xstr $(HDRS) $(OBJS) xs.o
+a.out: xstr $(HDRS) $(OBJS)
 	@rm -f x.c
-	$(CC) $(LDFLAGS) xs.o $(OBJS) $(CRLIB) -ltermlib
+	$(CC) $(LDFLAGS) $(OBJS) $(CRLIB)
 	size a.out
 
 vers.o:
@@ -86,7 +87,7 @@ install: rogue
 
 distr: rmmach distmod.o mach_dep.o
 	@rm -f x.c
-	$(CC) -s $(LDFLAGS) -o =bin/$(BINARY) distmod.o mach_dep.o $(CRLIB) -ltermlib
+	$(CC) -s $(LDFLAGS) -o =bin/$(BINARY) distmod.o mach_dep.o $(CRLIB)
 	size =bin/$(BINARY)
 
 rmmach:
@@ -107,7 +108,7 @@ prob.o: prob.c rogue.h
 
 p.out:	$(HDRS) $(POBJS) xs.po
 	@rm -f x.c
-	$(CC) $(PROFLAGS) $(LDFLAGS) -o p.out xs.po $(POBJS) $(CRLIB) -ltermlib
+	$(CC) $(PROFLAGS) $(LDFLAGS) -o p.out xs.po $(POBJS) $(CRLIB)
 	size p.out
 
 vers.po:

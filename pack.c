@@ -39,8 +39,10 @@ bool silent;
      * to see if there is something in thr same group and if there is then
      * increment the count.
      */
-    floor = (proom->r_flags & ISGONE) ? PASSAGE : FLOOR;
-    if (obj->o_group)
+    if (proom) 
+	floor = (proom->r_flags & ISGONE) ? PASSAGE : FLOOR;
+    else 
+	floor = FLOOR;if (obj->o_group)
     {
 	for (op = pack; op != NULL; op = next(op))
 	{
@@ -320,7 +322,7 @@ int type;
 	    /*
 	     * Give the poor player a chance to abort the command
 	     */
-	    if (ch == ESCAPE || ch == CTRL(G))
+	    if (ch == ESCAPE || ch == CTRL('G'))
 	    {
 		after = FALSE;
 		msg("");

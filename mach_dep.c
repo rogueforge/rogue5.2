@@ -97,7 +97,9 @@ setup()
     signal(SIGILL, auto_save);
     signal(SIGTRAP, auto_save);
     signal(SIGIOT, auto_save);
+#ifdef SIGEMT
     signal(SIGEMT, auto_save);
+#endif
     signal(SIGFPE, auto_save);
     signal(SIGBUS, auto_save);
     signal(SIGSEGV, auto_save);
@@ -390,9 +392,13 @@ flush_type()
 {
     register int flag;
 
+#if !defined(_XOPEN_CURSES) && !defined(__NCURSES_H)
     flag = _tty.sg_flags;
     _tty.sg_flags |= RAW;
     stty(_tty_ch, &_tty);
     _tty.sg_flags = flag;
     stty(_tty_ch, &_tty);
+#else
+    flushinp();
+#endif
 }

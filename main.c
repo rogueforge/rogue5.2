@@ -34,7 +34,9 @@ char **envp;
     signal(SIGILL, exit);
     signal(SIGTRAP, exit);
     signal(SIGIOT, exit);
+#ifdef SIGEMT
     signal(SIGEMT, exit);
+#endif
     signal(SIGFPE, exit);
     signal(SIGBUS, exit);
     signal(SIGSEGV, exit);
@@ -226,7 +228,11 @@ playit()
      * set up defaults for slow terminals
      */
 
+#if !defined(_XOPEN_CURSES) && !defined(__NCURSES_H)
     if (_tty.sg_ospeed <= B1200)
+#else
+    if (baudrate() <= 1200)
+#endif
     {
 	terse = TRUE;
 	jump = TRUE;
@@ -289,7 +295,11 @@ quit()
  */
 leave()
 {
+#if !defined(_XOPEN_CURSES) && !defined(__NCURSES_H)
     if (!_endwin)
+#else
+    if (1)
+#endif
     {
 	mvcur(0, COLS - 1, LINES - 1, 0);
 	endwin();

@@ -84,7 +84,7 @@ init_player()
  * potions and scrolls
  */
 
-static char *rainbow[] = {
+static char rainbow[][11] = {
     "amber",
     "aquamarine",
     "black",
@@ -137,7 +137,7 @@ static char *sylls[] = {
 };
 
 typedef struct {
-    char	*st_name;
+    char	st_name[15];
     int		st_value;
 } STONE;
 
@@ -172,7 +172,7 @@ static STONE stones[] = {
 
 #define NSTONES (sizeof stones / sizeof (STONE))
 
-static char *wood[] = {
+static char wood[][15] = {
     "avocado wood",
     "balsa",
     "bamboo",
@@ -210,7 +210,7 @@ static char *wood[] = {
 
 #define NWOOD (sizeof wood / sizeof (char *))
 
-static char *metal[] = {
+static char metal[][10] = {
     "aluminum",
     "beryllium",
     "bone",

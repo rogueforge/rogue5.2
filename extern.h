@@ -45,8 +45,12 @@ extern WINDOW	*hw;
 
 char	*brk(), *charge_str(), *ctime(), *getenv(), *inv_name(),
 	*killname(), *malloc(), *nothing(), *num(), *ring_num(),
-	*sbrk(), *sprintf(), *strcat(), *strcpy(), *tr_name(),
-	*unctrl(), *vowelstr();
+	*sbrk(), *strcat(), *strcpy(), *tr_name(),
+	*vowelstr();
+
+#if !defined(_XOPEN_CURSES) && !defined(__NCURSES_H)
+char    *unctrl();
+#endif
 
 int	auto_save(), doctor(), endit(), leave(), nohaste(), quit(),
 	rollwand(), runners(), sight(), stomach(), swander(), tstp(),

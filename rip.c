@@ -6,6 +6,7 @@
  */
 
 #include <curses.h>
+#include <term.h>
 #include <time.h>
 #include <signal.h>
 #include <sys/types.h>
@@ -61,6 +62,10 @@ char monst;
     };
     int	endit();
 
+#if defined(_XOPEN_CURSES) || defined(__NCURSES_H)
+    char *SO=tigetstr("smso");
+    char *SE=tigetstr("rmso");
+#endif
     start_score();
 
     if (flags != -1)
@@ -150,7 +155,11 @@ char monst;
 
 	if (scp->sc_score) {
 	    if (sc2 == scp && SO)
+#if !defined(_XOPEN_CURSES) && !defined(__NCURSES_H)
 		_puts(SO);
+#else
+		tputs(SO, 0, putchar);
+#endif
 	    printf("%d\t%d\t%s: %s on level %d", scp - top_ten + 1,
 		scp->sc_score, scp->sc_name, reason[scp->sc_flags],
 		scp->sc_level);
@@ -186,7 +195,11 @@ char monst;
 	    else
 		printf(".\n");
 	    if (sc2 == scp && SE)
+#if !defined(_XOPEN_CURSES) && !defined(__NCURSES_H)
 		_puts(SE);
+#else
+		tputs(SE, 0, putchar);
+#endif
 	}
 	else
 	    break;

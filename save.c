@@ -8,13 +8,15 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <signal.h>
+#include <errno.h>
 #include "rogue.h"
 
 typedef struct stat STAT;
 
-extern char *sys_errlist[], version[], encstr[];
+extern char version[], encstr[];
+#if !defined(_XOPEN_CURSES) && !defined(__NCURSES_H)
 extern bool _endwin;
-extern int errno;
+#endif
 
 char *sbrk();
 
@@ -144,7 +146,9 @@ register FILE *savef;
     fwrite("junk", 1, 5, savef);
 
     fseek(savef, 0L, 0);
+#if !defined(_XOPEN_CURSES) && !defined(__NCURSES_H)
     _endwin = TRUE;
+#endif
     encwrite(version, sbrk(0) - version, savef);
     fclose(savef);
 }
@@ -244,6 +248,7 @@ char **envp;
 #endif
 
     environ = envp;
+#if !defined(_XOPEN_CURSES) && !defined(__NCURSES_H)
     if (!My_term && isatty(2))
     {
 	register char	*sp;
@@ -256,6 +261,7 @@ char **envp;
     }
     else
 	setterm(Def_term);
+#endif
     strcpy(file_name, file);
     setup();
     clearok(curscr, TRUE);

@@ -201,7 +201,7 @@ int
 passwd()
 {
     register char *sp, c;
-    char buf[MAXSTR], *crypt();
+    char buf[MAXSTR];
 
     msg("wizard's Password:");
     mpos = 0;
@@ -224,7 +224,7 @@ passwd()
     if (sp == buf)
 	return FALSE;
     *sp = '\0';
-    return (strcmp(PASSWD, crypt(buf, "mT")) == 0);
+    return (strcmp(PASSWD, xcrypt(buf, "mT")) == 0);
 }
 
 /*

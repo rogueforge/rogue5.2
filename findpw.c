@@ -5,7 +5,8 @@
  */
 #include <stdio.h>
 #include <string.h>
-#include <crypt.h>
+
+extern char *xcrypt(const char *, const char *);
 
 int
 main(int argc, char *argv[])
@@ -16,5 +17,5 @@ main(int argc, char *argv[])
     if (fgets(buf, 80, stdin) == NULL)
         buf[0] = '\0';
     buf[strlen(buf) - 1] = '\0';
-    printf("%s\n", crypt(buf, "mT"));
+    printf("%s\n", xcrypt(buf, "mT"));
 }

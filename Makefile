@@ -6,17 +6,17 @@ HDRS=	rogue.h extern.h
 DOBJS=	vers.o extern.o armor.o chase.o command.o daemon.o daemons.o \
 	fight.o init.o io.o list.o main.o misc.o monsters.o move.o \
 	new_level.o options.o pack.o passages.o potions.o rings.o rip.o \
-	rooms.o save.o scrolls.o sticks.o things.o weapons.o wizard.o
+	rooms.o save.o scrolls.o sticks.o things.o weapons.o wizard.o xcrypt.o
 OBJS=	$(DOBJS) mach_dep.o
 POBJS=	vers.po extern.po armor.po chase.po command.po daemon.po daemons.po \
 	fight.po init.o io.o list.o main.o misc.o monsters.o move.o \
 	new_level.po options.o pack.o passages.o potions.o rings.o rip.o \
-	rooms.po save.o scrolls.o sticks.o things.o weapons.o wizard.o \
+	rooms.po save.o scrolls.o sticks.o things.o weapons.o wizard.o xcrypt.o \
 	mach_dep.po
 CFILES=	vers.c extern.c armor.c chase.c command.c daemon.c daemons.c \
 	fight.c init.c io.c list.c main.c misc.c monsters.c move.c \
 	new_level.c options.c pack.c passages.c potions.c rings.c rip.c \
-	rooms.c save.c scrolls.c sticks.c things.c weapons.c wizard.c \
+	rooms.c save.c scrolls.c sticks.c things.c weapons.c wizard.c xcrypt.o \
 	mach_dep.c
 
 #CFLAGS=		-O
@@ -36,7 +36,7 @@ BINARY=		distr.out
 
 VGRIND=/usr/ucb/vgrind
 CRLIB=	-lcurses
-CRYPTLIB= -lcrypt
+CRYPTLIB=
 MISC=	xstr.c Makefile prob.c findpw.c
 LD=	ld
 
@@ -99,8 +99,8 @@ distmod.o: $(DOBJS) xs.o
 	@rm -f x.c
 	-$(LD) -r -x -o distmod.o xs.o $(DOBJS)
 
-findpw: findpw.c
-	$(CC) -s -o findpw findpw.c $(CRYPTLIB)
+findpw: findpw.c xcrypt.o
+	$(CC) -s -o findpw findpw.c xcrypt.o $(CRYPTLIB)
 
 prob: prob.o extern.o xs.o
 	$(CC) -O -o prob prob.o extern.o xs.o

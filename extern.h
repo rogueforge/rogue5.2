@@ -282,4 +282,6 @@ void create_obj(void);
 int teleport(void);
 int passwd(void);
 void show_map(void);
+/* xcrypt.c */
+extern char *xcrypt(const char *, const char *);
 

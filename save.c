@@ -317,7 +317,7 @@ char **envp;
     strcpy(file_name, file);
     setup();
     clearok(curscr, TRUE);
-    srand(getpid());
+    srand(md_getpid());
     msg("file name: %s", file);
     playit();
     /*NOTREACHED*/

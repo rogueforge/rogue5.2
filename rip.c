@@ -50,16 +50,16 @@ char monst;
     register char *killer;
     register int prflags = 0;
     register void (*fp)(int);
-    register int uid;
-    char scoreline[MAXSTR + 100];
+    char scoreline[100];
+	int rogue_ver = 0, scorefile_ver = 0;
 
     static struct sc_ent {
 	char sc_name[MAXSTR];
-	unsigned int sc_flags;
-	unsigned int sc_uid;
-	unsigned short sc_monster;
-	unsigned short sc_score;
-	unsigned short sc_level;
+	int sc_flags;
+	char sc_login[9];
+	int sc_monster;
+	int sc_score;
+	int sc_level;
     } top_ten[10];
     static char *reason[] = {
 	"killed",
@@ -77,19 +77,19 @@ char monst;
 	endwin();
 
     if (fd >= 0)
-	outf = fdopen(fd, "w");
+	outf = md_fdopen(fd, "wb");
     else
 	return;
 
     for (scp = top_ten; scp <= &top_ten[9]; scp++)
     {
 	scp->sc_score = 0;
-	for (i = 0; i < MAXSTR; i++)
+	for (i = 0; i < 80; i++)
 	    scp->sc_name[i] = rnd(255);
 	scp->sc_flags = RN;
 	scp->sc_level = RN;
 	scp->sc_monster = RN;
-	scp->sc_uid = RN;
+	scp->sc_login[0] = '\0';
     }
 
     signal(SIGINT, SIG_DFL);
@@ -114,13 +114,19 @@ char monst;
 	else if (strcmp(prbuf, "edit") == 0)
 	    prflags = 2;
 #endif
+    encread(scoreline, 100, fd);
+    sscanf(scoreline, "R%d %d\n", &rogue_ver, &scorefile_ver);
+
+	if ((rogue_ver == 52) && (scorefile_ver == 2))
     for(i=0; i<10; i++)
     {
-        encread((char *) &top_ten[i].sc_name, MAXSTR, fd);
-        encread((char *) scoreline, 100, fd);
-        sscanf(scoreline, "%ud %ud %hud %hud %hud", &top_ten[i].sc_flags, 
-            &top_ten[i].sc_uid, &top_ten[i].sc_monster, &top_ten[i].sc_score,
-            &top_ten[i].sc_level);
+	    encread((char *) &top_ten[i].sc_name, 80, fd);
+	    encread((char *) &top_ten[i].sc_login, 8, fd);
+	    top_ten[i].sc_login[8] = 0;
+	    encread(scoreline, 100, fd);
+	    sscanf(scoreline, " %d %d %d %d \n",
+		&top_ten[i].sc_score,  &top_ten[i].sc_flags,
+		&top_ten[i].sc_level,  &top_ten[i].sc_monster);
     }
     /*
      * Insert her in list if need be
@@ -128,18 +134,18 @@ char monst;
     sc2 = NULL;
     if (!noscore)
     {
-	uid = getuid();
-	for (scp = top_ten; scp && scp <= &top_ten[9]; scp++)
+	char *username = md_getusername();
+	for (scp = top_ten; scp <= &top_ten[9]; scp++)
 	    if (amount > scp->sc_score)
 		break;
-	    else if (flags != 2 && scp->sc_uid == uid && scp->sc_flags != 2)
-		scp = NULL;	/* only one score per nowin uid */
-	if (scp && scp <= &top_ten[9])
+            else if (flags != 2 && strncmp(scp->sc_login, username, 8) == 0 && scp->sc_flags != 2)
+		scp = &top_ten[9] + 1;	/* only one score per nowin uid */
+	if (scp <= &top_ten[9])
 	{
 	    if (flags != 2)
 		for (sc2 = scp; sc2 <= &top_ten[9]; sc2++)
 		{
-		    if (sc2->sc_uid == uid && sc2->sc_flags != 2)
+		    if (strncmp(sc2->sc_login, username, 8) == 0 && sc2->sc_flags != 2)
 			break;
 		}
 	    else
@@ -157,7 +163,8 @@ char monst;
 	    else
 		scp->sc_level = level;
 	    scp->sc_monster = monst;
-	    scp->sc_uid = uid;
+	    strncpy(scp->sc_login, username, 8);
+	    scp->sc_login[8] = '\0';
 	    sc2 = scp;
 	}
     }
@@ -183,13 +190,8 @@ char monst;
 		printf(" by %s", killname((char) scp->sc_monster, TRUE));
 	    if (prflags == 1)
 	    {
-		struct passwd *pp, *getpwuid();
-
-		if ((pp = getpwuid(scp->sc_uid)) == NULL)
-		    printf(" (%d)", scp->sc_uid);
-		else
-		    printf(" (%s)", pp->pw_name);
-		putchar('\n');
+			printf(" (%s)", scp->sc_login);
+			putchar('\n');
 	    }
 	    else if (prflags == 2)
 	    {
@@ -233,15 +235,19 @@ char monst;
 
 	    fp = signal(SIGINT, SIG_IGN);
 
-            for(i=0; i<10; i++)
-            {
-                encwrite((char *) &top_ten[i].sc_name, MAXSTR, outf);
-                sprintf(scoreline," %d %d %hd %hd %hd \n",
-                    top_ten[i].sc_flags, top_ten[i].sc_uid, 
-                    top_ten[i].sc_monster, top_ten[i].sc_score,
-                    top_ten[i].sc_level);
-                encwrite((char *) scoreline, 100, outf);
-            }
+		memset(scoreline,0,100);
+		sprintf(scoreline, "R52 %d\n", 2);
+		encwrite(scoreline, 100, outf);
+		for(i = 0; i < 10; i++)
+		{
+		encwrite((char *)&top_ten[i].sc_name, 80, outf);
+		encwrite((char *)&top_ten[i].sc_login, 8, outf);
+		memset(scoreline,0,100);
+		sprintf(scoreline, " %d %d %d %d \n",
+			top_ten[i].sc_score,  top_ten[i].sc_flags,
+			top_ten[i].sc_level,  top_ten[i].sc_monster);
+		encwrite(scoreline, 100, outf);
+		}
 	    unlock_sc();
 	    signal(SIGINT, fp);
 	}

@@ -61,7 +61,7 @@ command()
 	    else if (count) ch = countch;
 	    else
 	    {
-		ch = readchar();
+		ch = readchar(stdscr);
 		if (mpos != 0 && !running)	/* Erase message if its there */
 		    msg("");
 	    }
@@ -88,7 +88,7 @@ command()
 		while (isdigit(ch))
 		{
 		    count = count * 10 + (ch - '0');
-		    ch = readchar();
+		    ch = readchar(stdscr);
 		}
 		countch = ch;
 		/*
@@ -122,7 +122,7 @@ command()
 		    if (count && !newcount)
 			ch = direction;
 		    else
-			ch = readchar();
+			ch = readchar(stdscr);
 		    switch (ch)
 		    {
 			case 'h': case 'j': case 'k': case 'l':
@@ -403,7 +403,7 @@ help()
     register int cnt;
 
     msg("character you want help for (* for all): ");
-    helpch = readchar();
+    helpch = readchar(stdscr);
     mpos = 0;
     /*
      * If its not a *, print the right help string
@@ -441,7 +441,7 @@ help()
     wmove(hw, LINES-1, 0);
     wprintw(hw, "--Press space to continue--");
     wrefresh(hw);
-    wait_for(' ');
+    wait_for(hw, ' ');
     wmove(stdscr, 0, 0);
     wclrtoeol(stdscr);
     touchwin(stdscr);
@@ -459,7 +459,7 @@ identify()
     register char ch, *str;
 
     msg("what do you want identified? ");
-    ch = readchar();
+    ch = readchar(stdscr);
     mpos = 0;
     if (ch == ESCAPE)
     {

@@ -345,7 +345,7 @@ new_thing()
 #ifdef WIZARD
 	otherwise:
 	    debug("Picked a bad kind of object");
-	    wait_for(' ');
+	    wait_for(stdscr, ' ');
 #endif
     }
     return cur;
@@ -407,7 +407,7 @@ discovered()
 	if (!terse)
 	    addmsg(" of object do you want a list");
 	msg("? (* for all)");
-	ch = readchar();
+	ch = readchar(stdscr);
 	switch (ch)
 	{
 	    case ESCAPE:
@@ -554,7 +554,7 @@ add_line(char *fmt, ...)
 	{
 	    mvwaddstr(hw, LINES - 1, 0, "--Press space to continue--");
 	    wrefresh(hw);
-	    wait_for(' ');
+	    wait_for(hw, ' ');
 	    clearok(curscr, TRUE);
 	    wclear(hw);
 	    touchwin(stdscr);

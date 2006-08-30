@@ -87,7 +87,7 @@ gotfile:
 	    {
 		msg("File exists.  Do you wish to overwrite it?");
 		mpos = 0;
-		if ((c = readchar()) == ESCAPE)
+		if ((c = readchar(stdscr)) == ESCAPE)
 		    goto quit;
 		if (c == 'y' || c == 'Y')
 		    break;
@@ -122,8 +122,8 @@ auto_save(int sig)
     register FILE *savef;
     register int i;
 
-    for (i = 0; i < NSIG; i++)
-	signal(i, SIG_IGN);
+    md_ignore_signals();
+
     if (file_name[0] != '\0' && (savef = fopen(file_name, "w")) != NULL)
 	save_file(savef);
     endwin();
@@ -147,7 +147,7 @@ register FILE *savef;
     close(fd);
     move(LINES-1, 0);
     refresh();
-    fstat(fileno(savef), &sbuf);
+    fstat(md_fileno(savef), &sbuf);
     /*
      * DO NOT DELETE.  This forces stdio to allocate the output buffer
      * so that malloc doesn't get confused on restart
@@ -222,7 +222,7 @@ char **envp;
 #ifdef WIZARD
 	!wizard &&
 #endif
-	unlink(file) < 0)
+    md_unlink_open_file(file, inf) < 0)
     {
 	printf("Cannot unlink file\n");
 	return FALSE;

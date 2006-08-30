@@ -137,12 +137,12 @@ void addmsg(char *fmt, ...);
 void endmsg(void);
 void doadd(char *fmt, va_list args);
 int step_ok(char ch);
-char readchar(void);
+char readchar(WINDOW *win);
 #if !defined(_XOPEN_CURSES) && !defined(__NCURSES_H)
 char *unctrl(int ch);
 #endif
 void status(void);
-void wait_for(int ch);
+void wait_for(WINDOW *win, int ch);
 void show_win(register WINDOW *scr, char *message);
 /* list.c */
 void _detach(register THING **list, register THING *item);

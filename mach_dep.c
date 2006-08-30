@@ -73,9 +73,8 @@ open_score()
 #else
     fd = -1;
 #endif
-    if (setuid(getuid()) == 0)
-        if (setgid(getgid()) == 0)
-            return;
+   
+    md_normaluser();
 }
 
 /*
@@ -94,10 +93,14 @@ setup()
     if (COLS > MAXCOLS)
 	COLS = MAXCOLS;
 
+#ifdef SIGHUP
     signal(SIGHUP, auto_save);
+#endif
 #ifndef DUMP
     signal(SIGILL, auto_save);
+#ifdef SIGTRAP
     signal(SIGTRAP, auto_save);
+#endif
 #ifdef SIGIOT
     signal(SIGIOT, auto_save);
 #endif
@@ -117,7 +120,9 @@ setup()
 
     signal(SIGINT, quit);
 #ifndef DUMP
+#ifdef SIGQUIT
     signal(SIGQUIT, endit);
+#endif
 #endif
 #ifdef CHECKTIME
     signal(SIGALRM, checkout);
@@ -136,7 +141,9 @@ void
 start_score()
 {
 #ifdef CHECKTIME
+#ifdef SIGALRM
     signal(SIGALRM, SIG_IGN);
+#endif
 #endif
 }
 
@@ -170,16 +177,17 @@ too_much()
 {
 #ifdef MAXLOAD
     double avec[3];
-#else
-    register int cnt;
-#endif
 
-#ifdef MAXLOAD
-    loadav(avec);
-    return (avec[1] > (MAXLOAD / 10.0));
+    if (md_getloadavg(avec) == 0)
+        if (avec[2] > (MAXLOAD / 10.0))
+	    return(1);
 #else
-    return (ucount() > MAXUSERS);
+#ifdef MAXUSERS
+    if (md_ucount() > MAXUSERS)
+	return(1) ;
 #endif
+#endif
+    return(0);
 }
 
 /*
@@ -193,7 +201,7 @@ author()
     if (wizard)
 	return TRUE;
 #endif
-    switch (getuid())
+    switch (md_getuid())
     {
 	case 162:
 	    return TRUE;
@@ -218,7 +226,9 @@ checkout(int sig)
     };
     int checktime;
 
+#ifdef SIGALRM
     signal(SIGALRM, checkout);
+#endif
     if (too_much())
     {
 	if (author())
@@ -229,7 +239,9 @@ checkout(int sig)
 	else if (num_checks++ == 3)
 	    fatal("Sorry.  You took to long.  You are dead\n");
 	checktime = (CHECKTIME * 60) / num_checks;
+#ifdef SIGALRM
 	alarm(checktime);
+#endif
 	chmsg(msgs[num_checks - 1], ((double) checktime / 60.0));
     }
     else
@@ -239,7 +251,9 @@ checkout(int sig)
 	    num_checks = 0;
 	    chmsg("The load has dropped back down.  You have a reprieve");
 	}
+#ifdef SIGALRM
 	alarm(CHECKTIME * 60);
+#endif
     }
 }
 
@@ -366,7 +380,7 @@ over:
 	return TRUE;
     for (cnt = 0; cnt < 5; cnt++)
     {
-	sleep(1);
+	md_sleep(1);
 	if (creat(lockfile, 0000) > 0)
 	    return TRUE;
     }
@@ -377,7 +391,7 @@ over:
     }
     if (time(NULL) - sbuf.st_mtime > 10)
     {
-	if (unlink(lockfile) < 0)
+	if (md_unlink(lockfile) < 0)
 	    return FALSE;
 	goto over;
     }
@@ -400,10 +414,10 @@ over:
 		}
 		if (time(NULL) - sbuf.st_mtime > 10)
 		{
-		    if (unlink(lockfile) < 0)
+		    if (md_unlink(lockfile) < 0)
 			return FALSE;
 		}
-		sleep(1);
+		md_sleep(1);
 	    }
 	else
 	    return FALSE;
@@ -419,7 +433,7 @@ void
 unlock_sc()
 {
 #ifdef SCOREFILE
-    unlink(lockfile);
+    md_unlink(lockfile);
 #endif
 }
 

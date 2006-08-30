@@ -96,7 +96,7 @@ option()
      */
     mvwaddstr(hw, LINES-1, 0, "--Press space to continue--");
     wrefresh(hw);
-    wait_for(' ');
+    wait_for(hw, ' ');
     clearok(curscr, TRUE);
     touchwin(stdscr);
     after = FALSE;
@@ -143,7 +143,7 @@ WINDOW *win;
     {
 	wmove(win, oy, ox);
 	wrefresh(win);
-	switch (readchar())
+	switch (readchar(win))
 	{
 	    case 't':
 	    case 'T':
@@ -194,16 +194,12 @@ WINDOW *win;
     /*
      * loop reading in the string, and put it in a temporary buffer
      */
-    for (sp = buf; (c = readchar()) != '\n' && c != '\r' && c != '\033';
+    for (sp = buf; (c = readchar(win)) != '\n' && c != '\r' && c != '\033';
 	wclrtoeol(win), wrefresh(win))
     {
 	if (c == -1)
 	    continue;
-#if !defined(_XOPEN_CURSES) && !defined(__NCURSES_H)
- 	else if (c == _tty.sg_erase)	/* process erase character */
-#else
-	else if (c == erasechar())	/* process erase character */
-#endif
+	else if (c == md_erasechar())	/* process erase character */
 	{
 	    if (sp > buf)
 	    {
@@ -215,11 +211,7 @@ WINDOW *win;
 	    }
 	    continue;
 	}
-#if !defined(_XOPEN_CURSES) && !defined(__NCURSES_H)
- 	else if (c == _tty.sg_kill)	/* process kill character */
-#else
-	else if (c == killchar())	/* process kill character */
-#endif
+	else if (c == md_killchar())     /* process kill character */
 	{
 	    sp = buf;
 	    wmove(win, oy, ox);

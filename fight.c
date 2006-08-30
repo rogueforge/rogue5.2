@@ -343,7 +343,6 @@ bool hurl;
     register int hplus;
     register int dplus;
     register int damage;
-    char *index();
 
     att = &thatt->t_stats;
     def = &thdef->t_stats;
@@ -413,7 +412,7 @@ bool hurl;
     for (;;)
     {
 	ndice = atoi(cp);
-	if ((cp = index(cp, 'd')) == NULL)
+	if ((cp = strchr(cp, 'd')) == NULL)
 	    break;
 	nsides = atoi(++cp);
 	if (swing(att->s_lvl, def_arm, hplus + str_plus(att->s_str)))
@@ -429,7 +428,7 @@ bool hurl;
 	    def->s_hpt -= max(0, damage);
 	    did_hit = TRUE;
 	}
-	if ((cp = index(cp, '/')) == NULL)
+	if ((cp = strchr(cp, '/')) == NULL)
 	    break;
 	cp++;
     }

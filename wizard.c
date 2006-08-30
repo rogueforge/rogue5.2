@@ -89,17 +89,17 @@ create_obj()
 
     obj = new_item();
     msg("type of item: ");
-    obj->o_type = readchar();
+    obj->o_type = readchar(stdscr);
     mpos = 0;
     msg("which %c do you want? (0-f)", obj->o_type);
-    obj->o_which = (isdigit((ch = readchar())) ? ch - '0' : ch - 'a' + 10);
+    obj->o_which = (isdigit((ch = readchar(stdscr))) ? ch - '0' : ch - 'a' + 10);
     obj->o_group = 0;
     obj->o_count = 1;
     mpos = 0;
     if (obj->o_type == WEAPON || obj->o_type == ARMOR)
     {
 	msg("blessing? (+,-,n)");
-	bless = readchar();
+	bless = readchar(stdscr);
 	mpos = 0;
 	if (bless == '-')
 	    obj->o_flags |= ISCURSED;
@@ -128,7 +128,7 @@ create_obj()
 	    case R_ADDHIT:
 	    case R_ADDDAM:
 		msg("blessing? (+,-,n)");
-		bless = readchar();
+		bless = readchar(stdscr);
 		mpos = 0;
 		if (bless == '-')
 		    obj->o_flags |= ISCURSED;
@@ -206,18 +206,10 @@ passwd()
     msg("wizard's Password:");
     mpos = 0;
     sp = buf;
-    while ((c = getchar()) != '\n' && c != '\r' && c != ESCAPE)
-#if !defined(_XOPEN_CURSES) && !defined(__NCURSES_H)
-	if (c == _tty.sg_kill)
-#else
-	if (c == killchar())
-#endif
+    while ((c = readchar(stdscr)) != '\n' && c != '\r' && c != ESCAPE)
+	if (c == md_killchar())
 	    sp = buf;
-#if !defined(_XOPEN_CURSES) && !defined(__NCURSES_H)
-	else if (c == _tty.sg_erase && sp > buf)
-#else
-	else if (c == erasechar() && sp > buf)
-#endif
+	else if (c == md_erasechar() && sp > buf)
 	    sp--;
 	else
 	    *sp++ = c;

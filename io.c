@@ -66,14 +66,18 @@ void
 endmsg()
 {
     if (save_msg)
-	strcpy(huh, msgbuf);
+    {
+	strncpy(huh, msgbuf, 80);
+	huh[79] = 0;
+    }
+
     if (mpos)
     {
 	look(FALSE);
 	move(0, mpos);
 	addstr("--More--");
 	refresh();
-	wait_for(' ');
+	wait_for(stdscr, ' ');
     }
     /*
      * All messages should start with uppercase, except ones that
@@ -130,16 +134,13 @@ step_ok(char ch)
  *	getchar().
  */
 char
-readchar()
+readchar(win)
+WINDOW *win;
 {
     char c;
-    register int cnt;
 
     fflush(stdout);
-    cnt = 0;
-    while (read(0, &c, 1) <= 0)
-	if (cnt++ > 100)	/* if we are getting infinite EOFs */
-	    auto_save(0);	/* save the game */
+    c = md_readchar(win);
     return c;
 }
 
@@ -217,16 +218,17 @@ status()
  *	Sit around until the guy types the right key
  */
 void
-wait_for(ch)
+wait_for(win, ch)
+WINDOW *win;
 register char ch;
 {
     register char c;
 
     if (ch == '\n')
-        while ((c = readchar()) != '\n' && c != '\r')
+        while ((c = readchar(win)) != '\n' && c != '\r')
 	    continue;
     else
-        while (readchar() != ch)
+        while (readchar(win) != ch)
 	    continue;
 }
 
@@ -243,7 +245,7 @@ char *message;
     touchwin(scr);
     wmove(scr, hero.y, hero.x);
     wrefresh(scr);
-    wait_for(' ');
+    wait_for(scr, ' ');
     clearok(curscr, TRUE);
     touchwin(stdscr);
 }

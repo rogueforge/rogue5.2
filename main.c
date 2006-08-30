@@ -31,19 +31,20 @@ char **argv;
 char **envp;
 {
     register char *env;
-    register struct passwd *pw;
-    struct passwd *getpwuid();
+    register char *pw;
     char *getpass();
     int lowtime;
 
-#ifdef __DJGPP__
-	_fmode = O_BINARY;
-#endif
+    md_init();
 
 #ifndef DUMP
+#ifdef SIGQUIT
     signal(SIGQUIT, exit);
+#endif
     signal(SIGILL, exit);
+#ifdef SIGTRAP
     signal(SIGTRAP, exit);
+#endif
 #ifdef SIGIOT
     signal(SIGIOT, exit);
 #endif
@@ -65,7 +66,7 @@ char **envp;
      * Check to see if he is a wizard
      */
     if (argc >= 2 && argv[1][0] == '\0')
-	if (strcmp(PASSWD, xcrypt(getpass("Wizard's password: "), "mT")) == 0)
+	if (strcmp(PASSWD, xcrypt(md_getpass("Wizard's password: "), "mT")) == 0)
 	{
 	    wizard = TRUE;
 	    player.t_flags |= SEEMONST;
@@ -79,8 +80,8 @@ char **envp;
      */
     if ((env = getenv("HOME")) != NULL)
 	strcpy(home, env);
-    else if ((pw = getpwuid(getuid())) != NULL)
-	strcpy(home, pw->pw_dir);
+    else if ((pw = md_gethomedir()) != NULL)
+	strcpy(home, pw);
     else
 	home[0] = '\0';
     strcat(home, "/");
@@ -91,13 +92,13 @@ char **envp;
     if ((env = getenv("ROGUEOPTS")) != NULL)
 	parse_opts(env);
     if (env == NULL || whoami[0] == '\0')
-	if ((pw = getpwuid(getuid())) == NULL)
+	if ((pw = md_getusername()) == NULL)
 	{
 	    printf("Say, who the hell are you?\n");
 	    exit(1);
 	}
 	else
-	    strucpy(whoami, pw->pw_name, strlen(pw->pw_name));
+	    strucpy(whoami, pw, strlen(pw));
     if (env == NULL || fruit[0] == '\0')
 	strcpy(fruit, "slime-mold");
 
@@ -310,7 +311,7 @@ quit(int sig)
 	mpos = 0;
     getyx(curscr, oy, ox);
     msg("really quit?");
-    if (readchar() == 'y')
+    if (readchar(stdscr) == 'y')
     {
 	signal(SIGINT, leave);
 	clear();
@@ -377,27 +378,10 @@ shell()
     /*
      * Fork and do a shell
      */
-    while ((pid = fork()) < 0)
-	sleep(1);
-    if (pid == 0)
-    {
-	execl(sh == NULL ? "/bin/sh" : sh, "shell", "-i", NULL);
-	perror("No shelly");
-	exit(-1);
-    }
-    else
-    {
-	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
-	while (wait(&ret_status) != pid)
-	    continue;
-	signal(SIGINT, quit);
-	signal(SIGQUIT, endit);
-	printf("\n[Press return to continue]");
-	noecho();
-	crmode();
-	in_shell = FALSE;
-	wait_for('\n');
-	clearok(stdscr, TRUE);
-    }
+    md_shellescape();
+
+    noecho();
+    crmode();
+    in_shell = FALSE;
+    clearok(stdscr, TRUE);
 }

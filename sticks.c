@@ -356,6 +356,18 @@ char *name;
 	switch (ch)
 	{
 	    case DOOR:
+		/*
+ 		 * this code is necessary if the hero is on a door
+ 		 * and he fires at the wall the door is in, it would
+ 		 * otherwise loop infinitely
+ 		 * It is also needed if a dragon flames at the hero.
+ 		 * If the hero is at a door, the dragon flame would bounce
+ 		 * and could kill other monsters inadvertly.
+ 		 */
+ 		if (ce(hero, pos))
+ 		    goto def;
+ 		/* FALLTHROUGH */
+
 	    case '|':
 	    case '-':
 	    case ' ':
@@ -368,6 +380,7 @@ char *name;
 		msg("the %s bounces", name);
 		break;
 	    default:
+def:
 		if (!hit_hero && (tp = moat(pos.y, pos.x)) != NULL)
 		{
 		    hit_hero = TRUE;

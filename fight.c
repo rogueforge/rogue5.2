@@ -728,7 +728,6 @@ bool pr;
     /*
      * Get rid of the monster.
      */
-    remove_monster(&tp->t_pos, tp, TRUE);
     if (pr)
     {
 	if (!terse)
@@ -743,6 +742,7 @@ bool pr;
 	    msg("%s", monsters[tp->t_type-'A'].m_name);
 	}
     }
+    remove_monster(&tp->t_pos, tp, TRUE);
     /*
      * Do adjustments if he went up a level
      */

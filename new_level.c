@@ -84,9 +84,9 @@ new_level()
 		rm = rnd_room();
 		rnd_pos(&rooms[rm], &stairs);
 		index = INDEX(stairs.y, stairs.x);
-	    } until (_level[index] == FLOOR);
+	    } until (_level[index] == FLOOR && (_flags[index] & F_REAL));
 	    sp = &_flags[index];
-	    *sp &= ~F_REAL;
+	    *sp &= ~(F_REAL | F_TMASK);
 	    *sp |= rnd(NTRAPS);
 	}
     }

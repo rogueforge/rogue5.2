@@ -157,8 +157,8 @@ put_things()
 	    /*
 	     * Put it somewhere
 	     */
-	    rm = rnd_room();
 	    do {
+	    rm = rnd_room();
 		rnd_pos(&rooms[rm], &tp);
 	    } until (chat(tp.y, tp.x) == FLOOR);
 	    chat(tp.y, tp.x) = cur->o_type;
@@ -180,8 +180,8 @@ put_things()
 	/*
 	 * Put it somewhere
 	 */
-	rm = rnd_room();
 	do {
+	rm = rnd_room();
 	    rnd_pos(&rooms[rm], &tp);
 	} until (winat(tp.y, tp.x) == FLOOR);
 	chat(tp.y, tp.x) = AMULET;

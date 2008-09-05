@@ -273,6 +273,7 @@ char **envp;
     }
 
 	hw = newwin(LINES, COLS, 0, 0);
+    keypad(stdscr,1);
     
 	mpos = 0;
     mvprintw(0, 0, "%s: %s", file, ctime(&sbuf2.st_mtime));

@@ -164,6 +164,7 @@ char **envp;
 #ifdef WIZARD
     noscore = wizard;
 #endif
+    keypad(stdscr,1);
     new_level();			/* Draw current level */
     /*
      * Start up daemons and fuses

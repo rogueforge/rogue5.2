@@ -258,8 +258,8 @@ register THING *mp;
 			else
 			{
 			    detach(pack, steal);
-			    discard(steal);
 			    msg("she stole %s!", inv_name(steal, TRUE));
+			    discard(steal);
 			}
 		    }
 		}

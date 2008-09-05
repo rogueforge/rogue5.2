@@ -151,6 +151,8 @@ do_zap()
 			    rm = rnd_room();
 			    rnd_pos(&rooms[rm], &tp->t_pos);
 			} until (winat(tp->t_pos.y, tp->t_pos.x) == FLOOR);
+			tp->t_room = roomin(&tp->t_pos);
+			tp->t_oldch = mvinch(tp->t_pos.y, tp->t_pos.x);
 			if (see_monst(tp))
 			    mvaddch(tp->t_pos.y, tp->t_pos.x, tp->t_disguise);
 			else if (on(player, SEEMONST))
@@ -164,13 +166,14 @@ do_zap()
 		    {
 			tp->t_pos.y = hero.y + delta.y;
 			tp->t_pos.x = hero.x + delta.x;
+		    
+		        if (tp->t_pos.y != y || tp->t_pos.x != x)
+			    tp->t_oldch = mvinch(tp->t_pos.y, tp->t_pos.x);
 		    }
 		    moat(y, x) = NULL;
 		    moat(tp->t_pos.y, tp->t_pos.x) = tp;
 		    if (tp->t_type == 'F')
 			player.t_flags &= ~ISHELD;
-		    if (tp->t_pos.y != y || tp->t_pos.x != x)
-			tp->t_oldch = mvinch(tp->t_pos.y, tp->t_pos.x);
 		}
 		tp->t_dest = &hero;
 		tp->t_flags |= ISRUN;

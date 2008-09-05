@@ -130,6 +130,8 @@ register bool drop;
 	    else
 		sprintf(pb, "A%s %s ring", vowelstr(r_stones[obj->o_which]),
 		    r_stones[obj->o_which]);
+	when GOLD:
+		sprintf(pb, "%d pieces of gold", obj->o_goldval);
 #ifdef WIZARD
 	otherwise:
 	    debug("Picked up something funny %s", unctrl(obj->o_type));

@@ -336,6 +336,7 @@ char *name;
     strcpy(bolt.o_hurldmg,"6d6");
     bolt.o_hplus = 100;
     bolt.o_dplus = 0;
+    bolt.o_flags = 0;
     w_names[FLAME] = name;
     switch (dir->y + dir->x)
     {

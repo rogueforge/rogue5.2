@@ -142,7 +142,7 @@ do_zap()
 		}
 		else
 		{
-		    if (see_monst(tp))
+		    if (isupper(toascii(mvinch(y,x))))
 			mvaddch(y, x, tp->t_oldch);
 		    if (obj->o_which == WS_TELAWAY)
 		    {

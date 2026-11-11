@@ -128,10 +128,16 @@ wanderer()
     register struct room *rp;
     register THING *tp;
     coord cp;
+    register int cnt = 0;
 
     tp = new_item();
     do
     {
+	if (cnt++ >= 500)
+	{
+	    discard(tp);
+	    return;
+	}
 	i = rnd_room();
 	if ((rp = &rooms[i]) == proom)
 	    continue;

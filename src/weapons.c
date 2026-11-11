@@ -146,7 +146,8 @@ register bool pr;
 	return;
     }
     if (pr)
-	msg("the %s vanishes as it hits the ground", w_names[obj->o_which]);
+	msg("the %s vanishes as it hits the ground",
+	    obj->o_type == WEAPON ? w_names[obj->o_which] : "object");
     discard(obj);
 }
 

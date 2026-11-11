@@ -51,11 +51,6 @@ init_check()
 	exit(1);
     }
     mytty = ttyname(0);
-    if (mytty != NULL && mytty[8] == 'p')
-    {
-	printf("Sorry, you may not play rogue over the network.\n");
-	exit(1);
-    }
 #if defined(MAXLOAD) || defined(MAXUSERS)
     maxusers = strlen("012345");
     if (too_much())

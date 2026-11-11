@@ -99,7 +99,9 @@ char monst;
     {
 	printf("[Press return to continue]");
 	fflush(stdout);
-	gets(prbuf);
+	if (fgets(prbuf, MAXSTR, stdin) == NULL)
+	    prbuf[0] = '\0';
+	prbuf[strcspn(prbuf, "\n")] = '\0';
     }
 #ifdef WIZARD
     if (wizard)
@@ -177,7 +179,7 @@ char monst;
 	    else if (prflags == 2)
 	    {
 		fflush(stdout);
-		gets(prbuf);
+		fgets(prbuf, MAXSTR, stdin);
 		if (prbuf[0] == 'd')
 		{
 		    for (sc2 = scp; sc2 < &top_ten[9]; sc2++)

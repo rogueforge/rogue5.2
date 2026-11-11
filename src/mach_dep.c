@@ -38,7 +38,6 @@ static int num_checks;		/* times we've gone over in checkout() */
  *	Check out too see if it is proper to play the game now
  */
 char *mytty;
-int maxusers;
 
 init_check()
 {
@@ -49,7 +48,6 @@ init_check()
     }
     mytty = ttyname(0);
 #if defined(MAXLOAD) || defined(MAXUSERS)
-    maxusers = strlen("012345");
     if (too_much())
     {
 	printf("Sorry, %s, but the system is too loaded now.\n", whoami);
@@ -172,12 +170,14 @@ too_much()
 
 #ifdef MAXLOAD
     loadav(avec);
-    return (avec[1] > (MAXLOAD / 10.0));
-#else
-    if (mytty != NULL && mytty[8] == 'd' && ucount() >= maxusers)
+    if (avec[1] > (MAXLOAD / 10.0))
 	return TRUE;
-    return FALSE;
 #endif
+#ifdef MAXUSERS
+    if (ucount() > MAXUSERS)
+	return TRUE;
+#endif
+    return FALSE;
 }
 
 /*
@@ -287,7 +287,6 @@ ucount()
     register struct utmp *up;
     register FILE *utmp;
     register int count;
-    char c;
 
     up = &buf;
     count = 0;
@@ -301,8 +300,7 @@ ucount()
 	    continue;
 	else
 #endif
-	if (buf.ut_name[0] != '\0' && buf.ut_line[3] == 'd'
-	    && index("012345", (c = buf.ut_line[4])))
+	if (buf.ut_name[0] != '\0')
 	    count++;
     fclose(utmp);
     return count;

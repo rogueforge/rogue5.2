@@ -252,6 +252,7 @@ playit()
 quit()
 {
     register int oy, ox;
+    sigset_t set;
 
     /*
      * Reset the signal in case we got here via an interrupt
@@ -263,6 +264,9 @@ quit()
     if (readchar() == 'y')
     {
 	signal(SIGINT, leave);
+	sigemptyset(&set);
+	sigaddset(&set, SIGINT);
+	sigprocmask(SIG_UNBLOCK, &set, (sigset_t *) NULL);
 	clear();
 	mvprintw(LINES - 2, 0, "You quit with %d gold pieces", purse);
 	move(LINES - 1, 0);

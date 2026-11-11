@@ -235,10 +235,7 @@ eat()
     }
     inpack--;
     if (--obj->o_count < 1)
-    {
 	detach(pack, obj);
-	discard(obj);
-    }
     if (food_left < 0)
 	food_left = 0;
     if ((food_left += HUNGERTIME - 200 + rnd(400)) > STOMACHSIZE)
@@ -257,6 +254,8 @@ eat()
 	}
 	else
 	    msg("yum, that tasted good");
+    if (obj->o_count < 1)
+	discard(obj);
 }
 
 /*

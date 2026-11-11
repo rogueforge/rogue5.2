@@ -296,6 +296,11 @@ ucount()
 	return 0;
 
     while (fread(up, 1, sizeof (*up), utmp) > 0)
+#ifdef USER_PROCESS
+	if (buf.ut_type != USER_PROCESS)
+	    continue;
+	else
+#endif
 	if (buf.ut_name[0] != '\0' && buf.ut_line[3] == 'd'
 	    && index("012345", (c = buf.ut_line[4])))
 	    count++;

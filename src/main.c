@@ -319,8 +319,8 @@ shell()
     /*
      * Fork and do a shell
      */
-    while ((pid = fork()) < 0)
-	sleep(1);
+    if ((pid = fork()) < 0)
+	perror("No shelly");
     if (pid == 0)
     {
 	execl(sh == NULL ? "/bin/sh" : sh, "shell", "-i", 0);
@@ -333,7 +333,7 @@ shell()
 
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
-	while (wait(&ret_status) != pid)
+	while (pid > 0 && wait(&ret_status) != pid)
 	    continue;
 	signal(SIGINT, quit);
 	signal(SIGQUIT, endit);

@@ -83,6 +83,7 @@ create_obj()
     register char ch, bless;
 
     obj = new_item();
+    obj->o_damage = obj->o_hurldmg = "0d0";
     msg("type of item: ");
     obj->o_type = readchar();
     mpos = 0;

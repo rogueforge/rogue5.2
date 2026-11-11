@@ -288,6 +288,7 @@ command()
 			    obj = new_item();
 			    obj->o_type = ARMOR;
 			    obj->o_which = PLATE_MAIL;
+			    obj->o_damage = obj->o_hurldmg = "0d0";
 			    obj->o_ac = -5;
 			    obj->o_flags |= ISKNOW;
 			    obj->o_count = 1;

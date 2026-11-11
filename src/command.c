@@ -590,11 +590,11 @@ call()
 	msg("call it: ");
     else
 	msg("what do you want to call it? ");
-    if (guess[obj->o_which] != NULL)
-	free(guess[obj->o_which]);
     strcpy(prbuf, elsewise);
     if (get_str(prbuf, stdscr) == NORM)
     {
+	if (guess[obj->o_which] != NULL)
+	    free(guess[obj->o_which]);
 	guess[obj->o_which] = malloc((unsigned int) (strlen(prbuf)
 	    < sizeof (THING) ? sizeof (THING) : strlen(prbuf) + 1));
 	strcpy(guess[obj->o_which], prbuf);

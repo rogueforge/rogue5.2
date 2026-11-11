@@ -212,6 +212,7 @@ char monst;
 	{
 	    fp = signal(SIGINT, SIG_IGN);
 	    encwrite((char *) top_ten, sizeof top_ten, outf);
+	    fflush(outf);
 	    unlock_sc();
 	    signal(SIGINT, fp);
 	}

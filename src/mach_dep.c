@@ -25,9 +25,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <errno.h>
 
 #ifdef SCOREFILE
 static char *lockfile = "/tmp/.roguelock";
+static int sc_held;		/* the score file itself is locked */
 #endif
 
 #ifdef CHECKTIME
@@ -375,6 +377,27 @@ ucount()
 #endif
 
 /*
+ * hold_sc:
+ *	Lock the score file itself.  The lock goes when the file is
+ *	closed.  Return TRUE if the file could be locked.
+ */
+hold_sc()
+{
+#ifdef SCOREFILE
+    register int cnt;
+
+    lseek(fd, 0L, 0);
+    for (cnt = 0; lockf(fd, F_TLOCK, 0L) < 0; cnt++)
+    {
+	if (cnt == 5 || (errno != EAGAIN && errno != EACCES))
+	    return (sc_held = FALSE);
+	sleep(1);
+    }
+    return (sc_held = TRUE);
+#endif
+}
+
+/*
  * lock_sc:
  *	lock the score file.  If it takes too long, ask the user if
  *	they care to wait.  Return TRUE if the lock is successful.
@@ -386,6 +409,8 @@ lock_sc()
     static struct stat sbuf;
     time_t time();
 
+    if (hold_sc())
+	return TRUE;
 over:
     if (open(lockfile, O_WRONLY|O_CREAT|O_EXCL, 0000) > 0)
 	return TRUE;
@@ -395,10 +420,11 @@ over:
 	if (open(lockfile, O_WRONLY|O_CREAT|O_EXCL, 0000) > 0)
 	    return TRUE;
     }
-    if (stat(lockfile, &sbuf) < 0)
+    if (lstat(lockfile, &sbuf) < 0)
     {
-	open(lockfile, O_WRONLY|O_CREAT|O_EXCL, 0000);
-	return TRUE;
+	if (open(lockfile, O_WRONLY|O_CREAT|O_EXCL, 0000) >= 0
+	    || lstat(lockfile, &sbuf) < 0)
+		return TRUE;
     }
     if (time(NULL) - sbuf.st_mtime > 10)
     {
@@ -416,10 +442,11 @@ over:
 	    {
 		if (open(lockfile, O_WRONLY|O_CREAT|O_EXCL, 0000) > 0)
 		    return TRUE;
-		if (stat(lockfile, &sbuf) < 0)
+		if (lstat(lockfile, &sbuf) < 0)
 		{
-		    open(lockfile, O_WRONLY|O_CREAT|O_EXCL, 0000);
-		    return TRUE;
+		    if (open(lockfile, O_WRONLY|O_CREAT|O_EXCL, 0000) >= 0
+			|| lstat(lockfile, &sbuf) < 0)
+			    return TRUE;
 		}
 		if (time(NULL) - sbuf.st_mtime > 10)
 		{
@@ -441,7 +468,8 @@ over:
 unlock_sc()
 {
 #ifdef SCOREFILE
-    unlink(lockfile);
+    if (!sc_held)
+	unlink(lockfile);
 #endif
 }
 

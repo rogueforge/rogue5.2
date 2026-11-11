@@ -217,4 +217,5 @@ char *message;
     wrefresh(scr);
     wait_for(' ');
     clearok(curscr, TRUE);
+    touchwin(stdscr);
 }

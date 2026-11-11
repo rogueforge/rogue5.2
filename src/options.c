@@ -97,6 +97,7 @@ option()
     wrefresh(hw);
     wait_for(' ');
     clearok(curscr, TRUE);
+    touchwin(stdscr);
     after = FALSE;
 }
 

@@ -385,7 +385,11 @@ hold_sc()
 {
 #ifdef SCOREFILE
     register int cnt;
+    static int tried = FALSE;
 
+    if (tried)
+	return sc_held;
+    tried = TRUE;
     lseek(fd, 0L, 0);
     for (cnt = 0; lockf(fd, F_TLOCK, 0L) < 0; cnt++)
     {

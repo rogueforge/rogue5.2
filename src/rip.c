@@ -111,6 +111,8 @@ char monst;
 	else if (strcmp(prbuf, "edit") == 0)
 	    prflags = 2;
 #endif
+    if (!noscore)
+	hold_sc();
     encread((char *) top_ten, sizeof top_ten, fd);
     /*
      * Insert her in list if need be

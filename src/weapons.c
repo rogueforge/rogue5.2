@@ -143,9 +143,9 @@ register bool pr;
 	attach(lvl_obj, obj);
 	return;
     }
-    discard(obj);
     if (pr)
 	msg("the %s vanishes as it hits the ground", w_names[obj->o_which]);
+    discard(obj);
 }
 
 /*

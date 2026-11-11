@@ -70,7 +70,7 @@ discard(item)
 register THING *item;
 {
     total--;
-    cfree((char *) item);
+    free((char *) item);
 }
 
 /*

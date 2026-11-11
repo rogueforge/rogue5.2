@@ -87,6 +87,7 @@ int inpack = 0;				/* Number of things in pack */
 int total = 0;				/* Total dynamic memory bytes */
 int lastscore = -1;			/* Score before this turn */
 int no_food = 0;			/* Number of levels without food */
+int turn_left = 0;			/* Moves left in a turn saved part way */
 int count = 0;				/* Number of times to repeat command */
 int fung_hit = 0;			/* Number of time fungi has hit */
 int quiet = 0;				/* Number of quiet turns */

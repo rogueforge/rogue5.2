@@ -43,7 +43,7 @@ extern char	_flags[], _level[], *a_names[], file_name[], fruit[],
 extern int	a_chances[], a_class[], count, dnum, food_left,
 		fung_hit, fd, group, hungry_state, inpack, lastscore,
 		level, max_level, mpos, no_command, no_food, no_move,
-		ntraps, purse, quiet, total;
+		ntraps, purse, quiet, total, turn_left;
 
 extern long	seed;
 

@@ -20,11 +20,17 @@ command()
 
     if (on(player, ISHASTE))
 	ntimes++;
-    /*
-     * Let the daemons start up
-     */
-    do_daemons(BEFORE);
-    do_fuses(BEFORE);
+    if (turn_left != 0)
+	ntimes = turn_left;
+    else
+    {
+	/*
+	 * Let the daemons start up
+	 */
+	do_daemons(BEFORE);
+	do_fuses(BEFORE);
+    }
+    turn_left = 0;
     while (ntimes--)
     {
 	/*
@@ -195,6 +201,7 @@ command()
 		    msg("rogue version %s. (mctesq was here)", release);
 		when 'S':
 		    after = FALSE;
+		    turn_left = ntimes + 1;
 		    if (save_game())
 		    {
 			move(LINES-1, 0);
@@ -203,6 +210,7 @@ command()
 			endwin();
 			exit(0);
 		    }
+		    turn_left = 0;
 		when '.': ;			/* Rest command */
 		when ' ': after = FALSE;	/* "Legal" illegal command */
 		when '^':

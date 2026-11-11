@@ -385,7 +385,7 @@ def:
 			else
 			    hit_monster(unc(pos), &bolt);
 		    }
-		    else if (ch != 'M' || tp->t_disguise == 'M')
+		    else if (tp->t_type != 'M' || tp->t_disguise == 'M')
 		    {
 			if (start == &hero)
 			    runto(&pos, &hero);

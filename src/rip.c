@@ -14,6 +14,8 @@
 #include <term.h>
 #include "rogue.h"
 
+static int sc_lock = -1;		/* the scores are locked: 1, or cannot be: 0 */
+
 static char *rip[] = {
 "                       __________",
 "                      /          \\",
@@ -48,7 +50,6 @@ char monst;
     register int prflags = 0;
     register int (*fp)(), uid;
     extern int (*tstp_handler)();
-    struct rlimit lim;
 
     static struct sc_ent {
 	char sc_name[MAXSTR];
@@ -114,7 +115,7 @@ char monst;
 	    prflags = 2;
 #endif
     if (!noscore)
-	hold_sc();
+	sc_lock = lock_sc();
     i = encread((char *) top_ten, sizeof top_ten, fd);
     for (scp = sc2 = top_ten; scp < &top_ten[10]; scp++)
 	if ((char *) (scp + 1) - (char *) top_ten <= i && scp->sc_score != 0
@@ -161,6 +162,8 @@ char monst;
 	    sc2 = scp;
 	}
     }
+    if (prflags != 2)
+	put_scores((char *) top_ten, sizeof top_ten, outf, sc2 != NULL);
     /*
      * Print the list
      */
@@ -216,22 +219,38 @@ char monst;
 	else
 	    break;
     }
+    if (prflags == 2)
+	put_scores((char *) top_ten, sizeof top_ten, outf, sc2 != NULL);
+}
+
+/*
+ * put_scores:
+ *	Update the list file: write the table back over the score file,
+ *	with the file locked, and close it.
+ */
+put_scores(table, size, outf, changed)
+char *table;
+unsigned int size;
+FILE *outf;
+int changed;
+{
+    register int (*fp)();
+    struct rlimit lim;
+
     fseek(outf, 0L, 0);
-    /*
-     * Update the list file
-     */
-    if (getrlimit(RLIMIT_FSIZE, &lim) == 0 && lim.rlim_cur < sizeof top_ten)
-	sc2 = NULL;
-    if (sc2 != NULL)
+    if (getrlimit(RLIMIT_FSIZE, &lim) == 0 && lim.rlim_cur < size)
+	changed = FALSE;
+    if (sc_lock < 0 && changed)
+	sc_lock = lock_sc();
+    if (!changed && sc_lock > 0)
+	unlock_sc();
+    if (changed && sc_lock > 0)
     {
-	if (lock_sc())
-	{
-	    fp = signal(SIGINT, SIG_IGN);
-	    encwrite((char *) top_ten, sizeof top_ten, outf);
-	    fflush(outf);
-	    unlock_sc();
-	    signal(SIGINT, fp);
-	}
+	fp = signal(SIGINT, SIG_IGN);
+	encwrite(table, size, outf);
+	fflush(outf);
+	unlock_sc();
+	signal(SIGINT, fp);
     }
     fclose(outf);
 }

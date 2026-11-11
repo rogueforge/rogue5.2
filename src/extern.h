@@ -49,8 +49,7 @@ extern WINDOW	*hw;
 
 char	*charge_str(), *ctime(), *getenv(), *inv_name(),
 	*killname(), *malloc(), *nothing(), *num(), *ring_num(),
-	*strcat(), *strcpy(), *tr_name(),
-	*unctrl(), *vowelstr();
+	*strcat(), *strcpy(), *tr_name(), *vowelstr();
 
 int	msg(char *fmt, ...), addmsg(char *fmt, ...);
 

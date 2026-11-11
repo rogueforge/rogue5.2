@@ -8,6 +8,7 @@
 
 #include <curses.h>
 #include <signal.h>
+#include <errno.h>
 #include <pwd.h>
 #include "rogue.h"
 
@@ -368,7 +369,8 @@ shell()
 
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
-	while (pid > 0 && wait(&ret_status) != pid)
+	errno = 0;
+	while (pid > 0 && wait(&ret_status) != pid && errno != ECHILD)
 	    continue;
 	signal(SIGINT, quit);
 	signal(SIGQUIT, endit);

@@ -236,6 +236,7 @@ int changed;
 {
     register int (*fp)();
     struct rlimit lim;
+    sigset_t set, oset;
 
     fseek(outf, 0L, 0);
     if (getrlimit(RLIMIT_FSIZE, &lim) == 0 && lim.rlim_cur < size)
@@ -247,9 +248,12 @@ int changed;
     if (changed && sc_lock > 0)
     {
 	fp = signal(SIGINT, SIG_IGN);
+	sigfillset(&set);
+	sigprocmask(SIG_BLOCK, &set, &oset);
 	encwrite(table, size, outf);
 	fflush(outf);
 	unlock_sc();
+	sigprocmask(SIG_SETMASK, &oset, (sigset_t *) NULL);
 	signal(SIGINT, fp);
     }
     fclose(outf);

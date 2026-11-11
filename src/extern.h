@@ -9,6 +9,8 @@
  * places in the program.
  */
 
+#include <stdarg.h>
+
 #define MAXSTR		80	/* maximum length of strings */
 #define MAXLINES	32	/* maximum number of screen lines used */
 #define MAXCOLS		80	/* maximum number of screen columns used */
@@ -47,6 +49,8 @@ char	*brk(), *charge_str(), *ctime(), *getenv(), *inv_name(),
 	*killname(), *malloc(), *nothing(), *num(), *ring_num(),
 	*sbrk(), *sprintf(), *strcat(), *strcpy(), *tr_name(),
 	*unctrl(), *vowelstr();
+
+int	msg(char *fmt, ...), addmsg(char *fmt, ...);
 
 int	auto_save(), doctor(), endit(), leave(), nohaste(), quit(),
 	rollwand(), runners(), sight(), stomach(), swander(), tstp(),

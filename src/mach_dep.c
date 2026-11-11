@@ -24,6 +24,7 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 
 #ifdef SCOREFILE
 static char *lockfile = "/tmp/.roguelock";
@@ -69,6 +70,12 @@ init_check()
  */
 open_score()
 {
+    register int i;
+
+    while ((i = open("/dev/null", O_RDWR)) >= 0 && i < 3)
+	continue;
+    if (i >= 3)
+	close(i);
 #ifdef SCOREFILE
     fd = open(SCOREFILE, 2);
 #else

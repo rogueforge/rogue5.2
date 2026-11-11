@@ -9,10 +9,7 @@
  *
  *	SCOREFILE	Where/if the score file should live.
  *	MAXLOAD		What (if any) the maximum load average should be
- *			when people are playing.  If defined, then
- *		LOADAV		Should rogue define it's own routine to
- *				get the load average?
- *		NAMELIST	If so, where does the system namelist hide?
+ *			when people are playing.
  *	MAXUSERS	What (if any) the maximum user count should be
  *			when people are playing.  If defined, then
  *		UCOUNT		Should rogue define it's own routine to
@@ -262,36 +259,17 @@ double arg;
 }
 #endif
 
-#ifdef LOADAV
-
-#include <nlist.h>
-
-struct nlist avenrun = {
-    "_avenrun"
-};
-
+#ifdef MAXLOAD
 /*
  * loadav:
- *	Looking up load average in core (for system where the loadav()
- *	system call isn't defined
+ *	Get the load average from the system, which calls it
+ *	getloadavg() now
  */
 loadav(avg)
 register double *avg;
 {
-    register int kmem;
-
-    if ((kmem = open("/dev/kmem", 0)) < 0)
-	goto bad;
-    nlist(NAMELIST, &avenrun);
-    if (avenrun.n_type == 0)
-    {
-bad:
+    if (getloadavg(avg, 3) < 3)
 	avg[0] = avg[1] = avg[2] = 0.0;
-	return;
-    }
-
-    lseek(kmem, (long) avenrun.n_value, 0);
-    read(kmem, (char *) avg, 3 * sizeof (double));
 }
 #endif
 

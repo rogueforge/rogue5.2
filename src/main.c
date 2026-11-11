@@ -208,8 +208,7 @@ tstp()
     getyx(curscr, y, x);
     mvcur(y, x, oy, ox);
     fflush(stdout);
-    curscr->_cury = oy;
-    curscr->_curx = ox;
+    wmove(curscr, oy, ox);
 }
 #endif
 
@@ -292,7 +291,7 @@ quit()
  */
 leave()
 {
-    if (!_endwin)
+    if (!isendwin())
     {
 	mvcur(0, COLS - 1, LINES - 1, 0);
 	endwin();

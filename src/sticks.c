@@ -255,7 +255,8 @@ do_zap()
 	otherwise:
 	    msg("what a bizarre schtick!");
     }
-    obj->o_charges--;
+    if (--obj->o_charges < 0)
+	obj->o_charges = 0;
 }
 
 /*

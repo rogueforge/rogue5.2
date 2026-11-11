@@ -246,7 +246,7 @@ register THING *mp;
 			{
 			    register int oc;
 
-			    oc = steal->o_count--;
+			    oc = --steal->o_count;
 			    steal->o_count = 1;
 			    msg("she stole %s!", inv_name(steal, TRUE));
 			    steal->o_count = oc;

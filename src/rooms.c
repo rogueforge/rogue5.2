@@ -250,7 +250,7 @@ register coord *cp;
 			    standend();
 			    break;
 			}
-			else
+			else if (moat(y, x) != NULL)
 			    moat(y, x)->t_oldch = floor;
 		    addch(floor);
 	    }

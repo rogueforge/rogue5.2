@@ -223,7 +223,7 @@ WINDOW *win;
 		continue;
 	    }
 	}
-	if (sp >= &buf[MAXINP] || !(isprint(c) || c == ' '))
+	if (sp >= &buf[MAXINP] || !(isprint((unsigned char) c) || c == ' '))
 	    putchar(CTRL('G'));
 	else
 	{
@@ -286,7 +286,7 @@ register char *str;
 	/*
 	 * Get option name
 	 */
-	for (sp = str; isalpha(*sp); sp++)
+	for (sp = str; isalpha((unsigned char) *sp); sp++)
 	    continue;
 	len = sp - str;
 	/*
@@ -336,7 +336,7 @@ register char *str;
 	/*
 	 * skip to start of next option name
 	 */
-	while (*sp && !isalpha(*sp))
+	while (*sp && !isalpha((unsigned char) *sp))
 	    sp++;
 	str = sp;
     }
@@ -354,7 +354,7 @@ register int len;
 	len = MAXINP;
     while (len--)
     {
-	if (isprint(*s2) || *s2 == ' ')
+	if (isprint((unsigned char) *s2) || *s2 == ' ')
 	    *s1++ = *s2;
 	s2++;
     }

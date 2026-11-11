@@ -78,11 +78,11 @@ command()
 	    /*
 	     * check for prefixes
 	     */
-	    if (isdigit(ch))
+	    if (isdigit((unsigned char) ch))
 	    {
 		count = 0;
 		newcount = TRUE;
-		while (isdigit(ch))
+		while (isdigit((unsigned char) ch))
 		{
 		    count = count * 10 + (ch - '0');
 		    ch = readchar();
@@ -457,7 +457,7 @@ identify()
 	msg("");
 	return;
     }
-    if (isupper(ch))
+    if (isupper((unsigned char) ch))
 	str = monsters[ch-'A'].m_name;
     else switch (ch)
     {

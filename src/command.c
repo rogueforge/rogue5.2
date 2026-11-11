@@ -183,7 +183,7 @@ command()
 		    else
 			after = FALSE;
 		when 'D': after = FALSE; discovered();
-		when CTRL('R') : after = FALSE; msg(huh);
+		when CTRL('R') : after = FALSE; msg("%s", huh);
 		when CTRL('L') :
 		    after = FALSE;
 		    clearok(curscr,TRUE);

@@ -61,7 +61,6 @@ char *a_names[MAXARMORS] = {		/* Names of armor types */
     "plate mail",
 };
 char *ws_made[MAXSTICKS];		/* What sticks are made of */
-char *release;				/* Release number of rogue */
 char whoami[MAXSTR];			/* Name of player */
 char fruit[MAXSTR];			/* Favorite fruit */
 char huh[MAXSTR];			/* The last message printed */

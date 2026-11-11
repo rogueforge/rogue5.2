@@ -346,8 +346,11 @@ register int y, x;
     if ((ch = chat(y, x)) == DOOR || (!(*fp & F_REAL) && ch != FLOOR))
     {
 	rp = &passages[pnum];
-	rp->r_exit[rp->r_nexits].y = y;
-	rp->r_exit[rp->r_nexits++].x = x;
+	if (rp->r_nexits < 12)
+	{
+	    rp->r_exit[rp->r_nexits].y = y;
+	    rp->r_exit[rp->r_nexits++].x = x;
+	}
     }
     else if (!(*fp & F_PASS))
 	return;

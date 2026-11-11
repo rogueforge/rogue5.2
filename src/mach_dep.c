@@ -71,13 +71,29 @@ init_check()
 open_score()
 {
     register int i;
+#ifdef SCOREFILE
+    struct stat sbuf, sbuf2;
+#endif
 
     while ((i = open("/dev/null", O_RDWR)) >= 0 && i < 3)
 	continue;
     if (i >= 3)
 	close(i);
 #ifdef SCOREFILE
-    fd = open(SCOREFILE, 2);
+    if (lstat(SCOREFILE, &sbuf) < 0 || (sbuf.st_mode & S_IFMT) != S_IFREG)
+	    fd = -1;
+    else if (sbuf.st_nlink != 1)
+    {
+	fprintf(stderr, "rogue: %s has more than one name; no scores are kept\n",
+	    SCOREFILE);
+	fd = -1;
+    }
+    else if ((fd = open(SCOREFILE, 2)) >= 0 && (fstat(fd, &sbuf2) < 0
+	|| sbuf2.st_dev != sbuf.st_dev || sbuf2.st_ino != sbuf.st_ino))
+    {
+	close(fd);
+	fd = -1;
+    }
 #else
     fd = -1;
 #endif

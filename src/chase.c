@@ -254,7 +254,8 @@ coord *ee;
 	 * get a valid random move
 	 */
 	ch_ret = *rndmove(tp);
-	if (moat(ch_ret.y, ch_ret.x) != NULL)
+	if (moat(ch_ret.y, ch_ret.x) != NULL
+	    || (ce(ch_ret, hero) && !ce(*ee, hero)))
 	    ch_ret = tp->t_pos;
 	dist = DISTANCE(ch_ret.y, ch_ret.x, ee->y, ee->x);
 	/*
@@ -306,6 +307,8 @@ coord *ee;
 			    continue;
 		    }
 		    if (moat(y, x) != NULL)
+			continue;
+		    if (ce(tryp, hero) && !ce(*ee, hero))
 			continue;
 		    /*
 		     * If we didn't find any scrolls at this place or it

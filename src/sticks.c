@@ -101,7 +101,7 @@ do_zap()
 
 	    y = hero.y;
 	    x = hero.x;
-	    while (step_ok(winat(y, x)))
+	    while (moat(y, x) == NULL && step_ok(winat(y, x)))
 	    {
 		y += delta.y;
 		x += delta.x;
@@ -214,7 +214,7 @@ do_zap()
 	case WS_SLOW_M:
 	    y = hero.y;
 	    x = hero.x;
-	    while (step_ok(winat(y, x)))
+	    while (moat(y, x) == NULL && step_ok(winat(y, x)))
 	    {
 		y += delta.y;
 		x += delta.x;

@@ -83,7 +83,8 @@ command()
 		newcount = TRUE;
 		while (isdigit((unsigned char) ch))
 		{
-		    count = count * 10 + (ch - '0');
+		    if (count < 1000)
+			count = count * 10 + (ch - '0');
 		    ch = readchar();
 		}
 		countch = ch;

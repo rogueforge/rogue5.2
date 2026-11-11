@@ -285,6 +285,7 @@ quit()
     msg("really quit?");
     if (readchar() == 'y')
     {
+	between = FALSE;
 	signal(SIGINT, leave);
 	sigemptyset(&set);
 	sigaddset(&set, SIGINT);

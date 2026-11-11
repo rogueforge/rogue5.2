@@ -8,6 +8,7 @@
 #include "rogue.h"
 
 bool after;				/* True if we want after daemons */
+bool between = FALSE;			/* Waiting for a command, between turns */
 bool noscore;				/* Was a wizard sometime */
 bool s_know[MAXSCROLLS];		/* Does he know what a scroll does */
 bool p_know[MAXPOTIONS];		/* Does he know what a potion does */

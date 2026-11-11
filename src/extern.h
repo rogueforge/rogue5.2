@@ -29,7 +29,7 @@ extern int rg_lines, rg_cols;
  * Now all the global variables
  */
 
-extern bool	after, amulet, askme, door_stop, fight_flush,
+extern bool	after, amulet, askme, between, door_stop, fight_flush,
 		firstmove, in_shell, jump, noscore, p_know[], passgo,
 		playing, r_know[], running, s_know[], save_msg,
 		slow_invent, terse, wizard, ws_know[];

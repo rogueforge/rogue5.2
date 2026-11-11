@@ -57,7 +57,9 @@ command()
 	    else if (count) ch = countch;
 	    else
 	    {
+		between = TRUE;
 		ch = readchar();
+		between = FALSE;
 		if (mpos != 0 && !running)	/* Erase message if its there */
 		    msg("");
 	    }

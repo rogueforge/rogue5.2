@@ -264,13 +264,18 @@ char **envp;
     savesig = signal(SIGTSTP, SIG_IGN);
 #endif
 
-    if ((inf = open(file, 0)) < 0)
+    if ((inf = open(file, 0)) < 0
+	|| fstat(inf, &sbuf2) < 0)
     {
 	perror(file);
 	return FALSE;
     }
-    fstat(inf, &sbuf2);
     syml = is_symlink(file);
+    if (sbuf2.st_uid != getuid())
+    {
+	printf("Sorry, saved game is not yours.\n");
+	return FALSE;
+    }
 
     fflush(stdout);
     encread(buf, strlen(version) + 1, inf);

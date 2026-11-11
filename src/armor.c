@@ -33,6 +33,8 @@ wear()
 	return;
     }
     waste_time();
+    if (pack_char(obj) == '?')
+	return;
     obj->o_flags |= ISKNOW;
     sp = inv_name(obj, TRUE);
     cur_armor = obj;

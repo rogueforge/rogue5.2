@@ -12,9 +12,9 @@
 
 typedef struct stat STAT;
 
-extern char *sys_errlist[], version[], encstr[];
+extern char version[], encstr[], *strerror();
 extern bool _endwin;
-extern int errno;
+#include <errno.h>
 
 char *sbrk();
 
@@ -94,7 +94,7 @@ gotfile:
 	}
 	strcpy(file_name, buf);
 	if ((savef = fopen(file_name, "w")) == NULL)
-	    msg(sys_errlist[errno]);	/* fake perror() */
+	    msg(strerror(errno));	/* fake perror() */
     } while (savef == NULL);
 
     /*

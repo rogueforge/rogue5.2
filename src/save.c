@@ -130,6 +130,8 @@ gotfile:
 	if ((savef = c < 0 ? NULL : fdopen(c, "w")) == NULL)
 	    msg(strerror(errno));	/* fake perror() */
     } while (savef == NULL);
+    weak_save = fstat(fileno(savef), &sbuf) == 0
+	&& (sbuf.st_uid != getuid() || (sbuf.st_mode & 022) != 0);
 
     /*
      * write out encrpyted file (after a stat)
@@ -274,6 +276,7 @@ char **envp;
     register int inf;
     register int (*savesig)();
     register bool syml;
+    char *unsafe = NULL;
     extern char **environ;
     char buf[MAXSTR], name[MAXPATH];
     STAT sbuf2;
@@ -300,15 +303,9 @@ char **envp;
     }
     syml = is_symlink(file);
     if (sbuf2.st_uid != getuid())
-    {
-	printf("Sorry, saved game is not yours.\n");
-	return FALSE;
-    }
-    if ((sbuf2.st_mode & 022) != 0)
-    {
-	printf("Sorry, saved game can be written by others.\n");
-	return FALSE;
-    }
+	unsafe = "Sorry, saved game is not yours.\n";
+    else if ((sbuf2.st_mode & 022) != 0)
+	unsafe = "Sorry, saved game can be written by others.\n";
 
     fflush(stdout);
     if (encread(buf, strlen(version) + 1, inf) != strlen(version) + 1
@@ -344,6 +341,11 @@ char **envp;
 	|| save_stamp[2] != sstamp)
     {
 	printf("Sorry, saved game is out of date.\n");
+	return FALSE;
+    }
+    if (unsafe != NULL && !weak_save)
+    {
+	printf("%s", unsafe);
 	return FALSE;
     }
     rg_rebase(__executable_start, _end, version, rg_edata, rg_bss, rg_ebss);
@@ -422,7 +424,7 @@ char **envp;
 #ifdef WIZARD
 	!owiz &&
 #endif
-	!use_up(file, inf))
+	(weak_save ? unlink(file) < 0 : !use_up(file, inf)))
     {
 	endwin();
 	printf("Cannot unlink file\n");

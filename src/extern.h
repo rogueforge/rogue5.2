@@ -32,7 +32,7 @@ extern int rg_lines, rg_cols;
 extern bool	after, amulet, askme, between, door_stop, fight_flush,
 		firstmove, in_shell, jump, noscore, p_know[], passgo,
 		playing, r_know[], running, s_know[], save_msg,
-		slow_invent, terse, wizard, ws_know[];
+		slow_invent, terse, weak_save, wizard, ws_know[];
 
 extern char	_flags[], _level[], *a_names[], file_name[], fruit[],
 		home[], huh[], outbuf[], *p_colors[], *p_guess[],

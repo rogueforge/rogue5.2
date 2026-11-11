@@ -142,7 +142,8 @@ wanderer()
 	if ((rp = &rooms[i]) == proom)
 	    continue;
 	rnd_pos(rp, &cp);
-    } until (rp != proom && step_ok(winat(cp.y, cp.x)));
+    } until (rp != proom && moat(cp.y, cp.x) == NULL
+	&& step_ok(winat(cp.y, cp.x)));
     new_monster(tp, randmonster(TRUE), &cp);
     runto(&tp->t_pos, &hero);
 #ifdef WIZARD

@@ -37,7 +37,7 @@ static int num_checks;		/* times we've gone over in checkout() */
  * init_check:
  *	Check out too see if it is proper to play the game now
  */
-char *mytty;
+char *mytty, *ttyname();
 
 init_check()
 {

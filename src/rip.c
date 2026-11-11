@@ -151,7 +151,7 @@ char monst;
 	if (scp->sc_score) {
 	    if (sc2 == scp && SO)
 		_puts(SO);
-	    printf("%d\t%d\t%s: %s on level %d", scp - top_ten + 1,
+	    printf("%d\t%d\t%s: %s on level %d", (int) (scp - top_ten) + 1,
 		scp->sc_score, scp->sc_name, reason[scp->sc_flags],
 		scp->sc_level);
 	    if (scp->sc_flags == 0)

@@ -147,7 +147,8 @@ do_zap()
 			{
 			    rm = rnd_room();
 			    rnd_pos(&rooms[rm], &tp->t_pos);
-			} until (winat(tp->t_pos.y, tp->t_pos.x) == FLOOR);
+			} until (winat(tp->t_pos.y, tp->t_pos.x) == FLOOR
+			    && !ce(tp->t_pos, hero));
 			if (see_monst(tp))
 			    mvaddch(tp->t_pos.y, tp->t_pos.x, tp->t_disguise);
 			else if (on(player, SEEMONST))

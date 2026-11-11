@@ -14,7 +14,7 @@
  * msg:
  *	Display a message at the top of the screen.
  */
-static char msgbuf[BUFSIZ];
+static char msgbuf[BUFSIZ + MAXPATH];
 static int newpos = 0;
 
 /* VARARGS1 */

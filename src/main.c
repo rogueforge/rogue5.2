@@ -59,11 +59,17 @@ char **envp;
      * get home and options from environment
      */
     if ((env = getenv("HOME")) != NULL)
-	strcpy(home, env);
+	strncpy(home, env, MAXPATH - MAXSTR);
     else if ((pw = getpwuid(getuid())) != NULL)
-	strcpy(home, pw->pw_dir);
+	strncpy(home, pw->pw_dir, MAXPATH - MAXSTR);
     else
 	home[0] = '\0';
+    home[MAXPATH - MAXSTR] = '\0';
+    if (strlen(home) >= MAXPATH - MAXSTR)
+    {
+	printf("Sorry, the name of your home directory is too long.\n");
+	exit(1);
+    }
     strcat(home, "/");
 
     strcpy(file_name, home);

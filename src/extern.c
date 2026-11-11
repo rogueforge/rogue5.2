@@ -63,14 +63,14 @@ char *a_names[MAXARMORS] = {		/* Names of armor types */
 char *ws_made[MAXSTICKS];		/* What sticks are made of */
 char whoami[MAXSTR];			/* Name of player */
 char fruit[MAXSTR];			/* Favorite fruit */
-char huh[MAXSTR];			/* The last message printed */
+char huh[BUFSIZ + MAXPATH];		/* The last message printed */
 char *s_guess[MAXSCROLLS];		/* Players guess at what scroll is */
 char *p_guess[MAXPOTIONS];		/* Players guess at what potion is */
 char *r_guess[MAXRINGS];		/* Players guess at what ring is */
 char *ws_guess[MAXSTICKS];		/* Players guess at what wand is */
 char *ws_type[MAXSTICKS];		/* Is it a wand or a staff */
-char file_name[MAXSTR];			/* Save file name */
-char home[MAXSTR];			/* User's home directory */
+char file_name[MAXPATH];		/* Save file name */
+char home[MAXPATH];			/* User's home directory */
 char _level[MAXLINES*MAXCOLS];		/* Level map */
 char _flags[MAXLINES*MAXCOLS];		/* Flags for each space on the map */
 

@@ -216,7 +216,7 @@ WINDOW *win;
 	{
 	    if (c == '-' && win != stdscr)
 		break;
-	    else if (c == '~')
+	    else if (c == '~' && strlen(home) < MAXINP)
 	    {
 		strcpy(buf, home);
 		waddstr(win, home);
@@ -306,7 +306,7 @@ register char *str;
 		     */
 		    for (str = sp + 1; *str == '='; str++)
 			continue;
-		    if (*str == '~')
+		    if (*str == '~' && op->o_opt == (int *) file_name)
 		    {
 			strcpy((char *) op->o_opt, home);
 			start = (char *) op->o_opt + strlen(home);

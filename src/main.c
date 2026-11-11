@@ -354,6 +354,7 @@ shell()
 	perror("No shelly");
     if (pid == 0)
     {
+	close(fd);
 #ifdef SIGXFSZ
 	signal(SIGXFSZ, SIG_DFL);
 #endif

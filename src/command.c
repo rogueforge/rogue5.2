@@ -292,6 +292,8 @@ command()
 			    obj->o_count = 1;
 			    obj->o_group = 0;
 			    add_pack(obj, TRUE);
+			    if (cur_weapon != NULL && pack_char(cur_weapon) == '?')
+				discard(cur_weapon);
 			    cur_weapon = obj;
 			    /*
 			     * And his suit of armor
@@ -304,6 +306,8 @@ command()
 			    obj->o_flags |= ISKNOW;
 			    obj->o_count = 1;
 			    obj->o_group = 0;
+			    if (cur_armor != NULL && pack_char(cur_armor) == '?')
+				discard(cur_armor);
 			    cur_armor = obj;
 			    add_pack(obj, TRUE);
 			}

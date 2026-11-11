@@ -261,7 +261,7 @@ register bool pass;
 	     * put the object there, set it in the level list
 	     * and re-draw the room if he can see it
 	     */
-	    if (y == hero.y && x == hero.x)
+	    if (y < 0 || y == hero.y && x == hero.x)
 		continue;
 	    if (((ch = chat(y, x)) == FLOOR || (pass && ch == PASSAGE))
 			&& rnd(++cnt) == 0)

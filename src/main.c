@@ -309,6 +309,7 @@ shell()
 {
     register int pid;
     register char *sh;
+    extern int (*tstp_handler)();
     int ret_status;
 
     /*
@@ -318,6 +319,9 @@ shell()
     refresh();
     endwin();
     putchar('\n');
+#ifdef SIGTSTP
+    signal(SIGTSTP, tstp_handler == (int (*)()) SIG_IGN ? SIG_IGN : SIG_DFL);
+#endif
     in_shell = TRUE;
     after = FALSE;
     sh = getenv("SHELL");
@@ -343,6 +347,9 @@ shell()
 	    continue;
 	signal(SIGINT, quit);
 	signal(SIGQUIT, endit);
+#ifdef SIGTSTP
+	signal(SIGTSTP, tstp_handler);
+#endif
 	printf("\n[Press return to continue]");
 	noecho();
 	crmode();

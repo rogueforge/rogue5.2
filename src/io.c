@@ -7,6 +7,7 @@
 #include <curses.h>
 #include <ctype.h>
 #include <errno.h>
+#include <signal.h>
 #include "rogue.h"
 
 /*
@@ -125,9 +126,13 @@ readchar()
 {
     char c;
     register int cnt;
+    extern int (*tstp_handler)();
 
     fflush(stdout);
     cnt = 0;
+#ifdef SIGTSTP
+    signal(SIGTSTP, tstp_handler);
+#endif
     keep_scr();
     while (read(0, &c, 1) <= 0)
 	if (errno == EINTR)

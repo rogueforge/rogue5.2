@@ -137,7 +137,7 @@ char monst;
 	if (scp < &top_ten[10])
 	{
 	    if (flags != 2)
-		for (sc2 = scp; sc2 < &top_ten[10]; sc2++)
+		for (sc2 = scp; sc2 < &top_ten[9]; sc2++)
 		{
 		    if (sc2->sc_uid == uid && sc2->sc_flags != 2)
 			break;

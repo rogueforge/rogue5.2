@@ -551,6 +551,8 @@ char *fmt, *arg;
 	if (fmt != NULL && !(line_cnt == 0 && *fmt == '\0'))
 	{
 	    mvwprintw(hw, line_cnt++, 0, fmt, arg);
+	    wmove(hw, line_cnt, 0);
+	    wclrtoeol(hw);
 	    lastfmt = fmt;
 	    lastarg = arg;
 	}

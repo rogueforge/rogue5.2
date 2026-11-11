@@ -62,12 +62,17 @@ addmsg(char *fmt, ...)
  */
 endmsg()
 {
+    register char *sp;
+
+    for (sp = msgbuf; *sp != '\0'; sp++)
+	if (*sp < ' ' || *sp > '~')
+	    *sp = '?';
     if (save_msg)
 	strcpy(huh, msgbuf);
     if (mpos)
     {
 	look(FALSE);
-	move(0, mpos);
+	move(0, mpos > COLS - 8 ? COLS - 8 : mpos);
 	addstr("--More--");
 	refresh();
 	wait_for(' ');
@@ -78,6 +83,8 @@ endmsg()
      */
     if (islower(msgbuf[0]) && msgbuf[1] != ')')
 	msgbuf[0] = toupper(msgbuf[0]);
+    if (newpos > COLS - 1)
+	msgbuf[newpos = COLS - 1] = '\0';
     mvaddstr(0, 0, msgbuf);
     clrtoeol();
     mpos = newpos;

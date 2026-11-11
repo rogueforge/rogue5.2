@@ -395,6 +395,7 @@ help()
 {
     register struct h_list *strp = helpstr;
     register char helpch;
+    register char *sp, *dp;
     register int cnt;
 
     msg("character you want help for (* for all): ");
@@ -411,7 +412,17 @@ help()
 	{
 	    if (strp->h_ch == helpch)
 	    {
-		msg("%s%s", unctrl(strp->h_ch), strp->h_desc);
+		strcpy(prbuf, unctrl(strp->h_ch));
+		dp = &prbuf[strlen(prbuf)];
+		for (sp = strp->h_desc; *sp != '\0'; sp++)
+		    if (*sp != '\t')
+			*dp++ = *sp;
+		    else
+			do
+			    *dp++ = ' ';
+			while ((dp - prbuf) % 8 != 0);
+		*dp = '\0';
+		msg("%s", prbuf);
 		break;
 	    }
 	    strp++;

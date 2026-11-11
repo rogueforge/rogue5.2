@@ -81,6 +81,7 @@ create_obj()
 {
     register THING *obj;
     register char ch, bless;
+    register int had;
 
     obj = new_item();
     obj->o_damage = obj->o_hurldmg = "0d0";
@@ -157,7 +158,10 @@ create_obj()
 	msg("how much?");
 	get_num(&obj->o_goldval, stdscr);
     }
+    had = total;
     add_pack(obj, FALSE);
+    if (total == had && pack_char(obj) == '?')
+	discard(obj);
 }
 #endif
 

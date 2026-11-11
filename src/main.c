@@ -30,7 +30,9 @@ char **envp;
     signal(SIGILL, exit);
     signal(SIGTRAP, exit);
     signal(SIGIOT, exit);
+#ifdef SIGEMT
     signal(SIGEMT, exit);
+#endif
     signal(SIGFPE, exit);
     signal(SIGBUS, exit);
     signal(SIGSEGV, exit);

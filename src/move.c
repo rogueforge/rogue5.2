@@ -88,6 +88,7 @@ over:
     if (on(player, ISHELD) && ch != 'F')
     {
 	msg("you are being held");
+	running = FALSE;
 	return;
     }
     switch (ch)

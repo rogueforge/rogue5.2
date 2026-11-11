@@ -170,6 +170,10 @@ char monst;
 	int _putchar();
 
 	if (scp->sc_score) {
+	    scp->sc_name[MAXSTR - 1] = '\0';
+	    for (i = 0; scp->sc_name[i] != '\0'; i++)
+		if (scp->sc_name[i] < ' ' || scp->sc_name[i] > '~')
+		    scp->sc_name[i] = '?';
 	    if (sc2 == scp && tigetstr("smso") != NULL)
 		putp(tigetstr("smso"));
 	    printf("%d\t%d\t%s: %s on level %d", (int) (scp - top_ten) + 1,

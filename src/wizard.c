@@ -69,7 +69,7 @@ bool insist;
 		r_guess[obj->o_which] = NULL;
 	    }
     }
-    msg(inv_name(obj, FALSE));
+    msg("%s", inv_name(obj, FALSE));
 }
 
 #ifdef WIZARD

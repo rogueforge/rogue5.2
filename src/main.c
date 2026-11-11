@@ -97,17 +97,26 @@ char **envp;
 	if (!restore(argv[1], envp))	/* Note: restore will never return */
 	    exit(1);
     lowtime = (int) time(NULL);
-#ifdef WIZARD
-    if (wizard && getenv("SEED") != NULL)
-	dnum = atoi(getenv("SEED"));
+
+    env = getenv("SEED");
+
+    if (env)
+	seed = atoi(env);
     else
-#endif
+	seed = 0;
+
+    if (seed > 0)
+	dnum = seed;
+    else
 	dnum = lowtime + getpid();
+
 #ifdef WIZARD
-    if (wizard)
+    if (wizard || env)
+#else
+    if (env)
+#endif
 	printf("Hello %s, welcome to dungeon #%d", whoami, dnum);
     else
-#endif
 	printf("Hello %s, just a moment while I dig the dungeon...", whoami);
     fflush(stdout);
     seed = dnum;

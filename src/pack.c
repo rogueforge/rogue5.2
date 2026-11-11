@@ -220,7 +220,7 @@ int type;
     char inv_temp[MAXSTR];
 
     n_objs = 0;
-    for (ch = 'a'; list != NULL; ch++, list = next(list))
+    for (ch = 'a'; list != NULL; ch += ch < '~', list = next(list))
     {
 	if (type && type != list->o_type && !(type == CALLABLE &&
 	    (list->o_type == SCROLL || list->o_type == POTION ||

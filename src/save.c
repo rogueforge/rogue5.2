@@ -241,18 +241,7 @@ char **envp;
 #endif
 
     environ = envp;
-    if (!My_term && isatty(2))
-    {
-	register char	*sp;
-
-	_tty_ch = 2;
-	gettmode();
-	if ((sp = getenv("TERM")) == NULL)
-	    sp = Def_term;
-	setterm(sp);
-    }
-    else
-	setterm(Def_term);
+    setterm(getenv("TERM"));
     strcpy(file_name, file);
     setup();
     clearok(curscr, TRUE);

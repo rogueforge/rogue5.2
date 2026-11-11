@@ -416,11 +416,5 @@ unlock_sc()
  */
 flush_type()
 {
-    register int flag;
-
-    flag = _tty.sg_flags;
-    _tty.sg_flags |= RAW;
-    stty(_tty_ch, &_tty);
-    _tty.sg_flags = flag;
-    stty(_tty_ch, &_tty);
+    flushinp();
 }

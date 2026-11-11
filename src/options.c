@@ -193,7 +193,7 @@ WINDOW *win;
     {
 	if (c == -1)
 	    continue;
-	else if (c == _tty.sg_erase)	/* process erase character */
+	else if (c == erasechar())	/* process erase character */
 	{
 	    if (sp > buf)
 	    {
@@ -205,7 +205,7 @@ WINDOW *win;
 	    }
 	    continue;
 	}
-	else if (c == _tty.sg_kill)	/* process kill character */
+	else if (c == killchar())	/* process kill character */
 	{
 	    sp = buf;
 	    wmove(win, oy, ox);

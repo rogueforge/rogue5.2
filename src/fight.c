@@ -673,6 +673,8 @@ killed(tp, pr)
 register THING *tp;
 bool pr;
 {
+    register char type;
+
     pstats.s_exp += tp->t_stats.s_exp;
     /*
      * If the monster was a violet fungi, un-hold him
@@ -702,6 +704,7 @@ bool pr;
     /*
      * Get rid of the monster.
      */
+    type = tp->t_type;
     remove_mon(&tp->t_pos, tp, TRUE);
     if (pr)
     {
@@ -714,7 +717,7 @@ bool pr;
 	{
 	    if (!terse)
 		addmsg("the ");
-	    msg("%s", monsters[tp->t_type-'A'].m_name);
+	    msg("%s", monsters[type-'A'].m_name);
 	}
     }
     /*

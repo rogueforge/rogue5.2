@@ -371,17 +371,17 @@ lock_sc()
     time_t time();
 
 over:
-    if (creat(lockfile, 0000) > 0)
+    if (open(lockfile, O_WRONLY|O_CREAT|O_EXCL, 0000) > 0)
 	return TRUE;
     for (cnt = 0; cnt < 5; cnt++)
     {
 	sleep(1);
-	if (creat(lockfile, 0000) > 0)
+	if (open(lockfile, O_WRONLY|O_CREAT|O_EXCL, 0000) > 0)
 	    return TRUE;
     }
     if (stat(lockfile, &sbuf) < 0)
     {
-	creat(lockfile, 0000);
+	open(lockfile, O_WRONLY|O_CREAT|O_EXCL, 0000);
 	return TRUE;
     }
     if (time(NULL) - sbuf.st_mtime > 10)
@@ -398,11 +398,11 @@ over:
 	if (fgets(prbuf, MAXSTR, stdin) != NULL && prbuf[0] == 'y')
 	    for (;;)
 	    {
-		if (creat(lockfile, 0000) > 0)
+		if (open(lockfile, O_WRONLY|O_CREAT|O_EXCL, 0000) > 0)
 		    return TRUE;
 		if (stat(lockfile, &sbuf) < 0)
 		{
-		    creat(lockfile, 0000);
+		    open(lockfile, O_WRONLY|O_CREAT|O_EXCL, 0000);
 		    return TRUE;
 		}
 		if (time(NULL) - sbuf.st_mtime > 10)

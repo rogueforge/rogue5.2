@@ -224,7 +224,7 @@ WINDOW *win;
 	    }
 	}
 	if (sp >= &buf[MAXINP] || !(isprint(c) || c == ' '))
-	    putchar(CTRL(G));
+	    putchar(CTRL('G'));
 	else
 	{
 	    *sp++ = c;

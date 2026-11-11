@@ -31,7 +31,7 @@ bool wizard = FALSE;			/* True if allows wizard commands */
 #endif
 
 char take;				/* Thing the rogue is taking */
-char prbuf[MAXSTR];			/* Buffer for sprintfs */
+char prbuf[2*MAXSTR];			/* Buffer for sprintfs */
 char outbuf[BUFSIZ];			/* Output buffer for stdout */
 char runch;				/* Direction player is running */
 char *s_names[MAXSCROLLS];		/* Names of the scrolls */

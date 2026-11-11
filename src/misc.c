@@ -456,7 +456,8 @@ register char **guess;
     else if (!know && askme && *guess == NULL)
     {
 	msg(terse ? "call it: " : "what do you want to call it? ");
-	if (get_str(prbuf, stdscr) == NORM)
+	prbuf[0] = '\0';
+	if (get_str(prbuf, stdscr) == NORM && prbuf[0] != '\0')
 	{
 	    *guess = malloc((unsigned int) (strlen(prbuf) < sizeof (THING)
 		? sizeof (THING) : strlen(prbuf) + 1));

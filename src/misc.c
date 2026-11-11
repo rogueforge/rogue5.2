@@ -211,6 +211,7 @@ register int y, x;
     return NULL;
 #else
     /* NOTREACHED */
+    return NULL;
 #endif
 }
 

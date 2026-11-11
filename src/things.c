@@ -544,6 +544,7 @@ char *fmt, *arg;
 	    wait_for(' ');
 	    clearok(curscr, TRUE);
 	    wclear(hw);
+	    touchwin(stdscr);
 	    newpage = TRUE;
 	    line_cnt = 0;
 	}

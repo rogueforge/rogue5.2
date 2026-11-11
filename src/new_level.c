@@ -60,7 +60,7 @@ new_level()
 	if (i++ > 100)
 	{
 	    i = 0;
-	    srand(getpid() + (int) time((long *) NULL));
+	    srand(getpid() + (int) time((time_t *) NULL));
 	}
     } until (_level[index] == FLOOR);
     _level[index] = STAIRS;

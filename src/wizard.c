@@ -158,7 +158,7 @@ teleport()
     {
 	rm = rnd_room();
 	rnd_pos(&rooms[rm], &c);
-    } until (step_ok(winat(c.y, c.x)));
+    } until (moat(c.y, c.x) == NULL && step_ok(winat(c.y, c.x)));
     if (&rooms[rm] != proom)
     {
 	leave_room(&hero);

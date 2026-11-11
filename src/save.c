@@ -136,8 +136,12 @@ gotfile:
      * write out encrpyted file (after a stat)
      * The fwrite is to force allocation of the buffer before the write
      */
-    save_file(savef);
-    return TRUE;
+    if (save_file(savef))
+	return TRUE;
+    c = errno;
+    unlink(file_name);
+    msg(strerror(c));
+    return FALSE;
 }
 
 /*
@@ -161,8 +165,9 @@ auto_save()
 	unlink(file_name);
     if (file_name[0] != '\0'
 	&& (i = open(file_name, O_WRONLY|O_CREAT|O_EXCL, 0400)) >= 0
-	&& (savef = fdopen(i, "w")) != NULL)
-	save_file(savef);
+	&& (savef = fdopen(i, "w")) != NULL
+	&& !save_file(savef))
+	    unlink(file_name);
     endwin();
     exit(1);
 }
@@ -175,11 +180,9 @@ save_file(savef)
 register FILE *savef;
 {
     register int y, x;
+    register int (*sig)();
 
-    /*
-     * close any open score file
-     */
-    close(fd);
+    sig = signal(SIGINT, SIG_IGN);
     move(LINES-1, 0);
     refresh();
     fstat(fileno(savef), &sbuf);
@@ -200,7 +203,19 @@ register FILE *savef;
     save_stamp[2] = (long) rg_estr - (long) release;
     encwrite(version, rg_edata - version, savef);
     encwrite(rg_bss, rg_ebss - rg_bss, savef);
-    fclose(savef);
+    y = ferror(savef);
+    if (fclose(savef) == EOF || y)
+    {
+	signal(SIGINT, sig);
+	return FALSE;
+    }
+    /*
+     * close any open score file
+     */
+    close(fd);
+    fd = -1;
+    signal(SIGINT, sig);
+    return TRUE;
 }
 
 /*

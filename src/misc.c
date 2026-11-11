@@ -207,7 +207,7 @@ register int y, x;
 		return op;
     }
 #ifdef WIZARD
-    debug(sprintf(prbuf, "Non-object %d,%d", y, x));
+    debug("Non-object %d,%d", y, x);
     return NULL;
 #else
     /* NOTREACHED */

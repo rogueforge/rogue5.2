@@ -158,6 +158,8 @@ auto_save()
 
     for (i = 0; i < NSIG; i++)
 	signal(i, SIG_IGN);
+    if (pstats.s_hpt <= 0)
+	file_name[0] = '\0';
     if (!save_ok())
     {
 	endwin();

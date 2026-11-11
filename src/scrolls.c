@@ -83,7 +83,7 @@ read_scroll()
 	     * otherwise give up
 	     */
 	    {
-		register bool appear = 0;
+		register char appear = 0;
 		coord mp;
 
 		/*

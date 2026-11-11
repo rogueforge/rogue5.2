@@ -437,4 +437,8 @@ THING	*find_mons(), *find_obj(), *get_item(), *new_item(),
 
 struct room	*roomin();
 
+#define malloc	rg_alloc
+#define calloc	rg_calloc
+#define free	rg_free
+
 #include "extern.h"

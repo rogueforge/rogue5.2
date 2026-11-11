@@ -12,8 +12,10 @@
 #include <stdarg.h>
 #include <time.h>
 #include <unistd.h>
+#include <limits.h>
 
 #define MAXSTR		80	/* maximum length of strings */
+#define MAXPATH		PATH_MAX	/* maximum length of a file name */
 #define MAXLINES	32	/* maximum number of screen lines used */
 #define MAXCOLS		80	/* maximum number of screen columns used */
 #define LINES		rg_lines	/* the size of the screen, as */

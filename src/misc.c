@@ -459,7 +459,8 @@ register char **guess;
 	msg(terse ? "call it: " : "what do you want to call it? ");
 	if (get_str(prbuf, stdscr) == NORM)
 	{
-	    *guess = malloc((unsigned int) strlen(prbuf) + 1);
+	    *guess = malloc((unsigned int) (strlen(prbuf) < sizeof (THING)
+		? sizeof (THING) : strlen(prbuf) + 1));
 	    strcpy(*guess, prbuf);
 	}
     }

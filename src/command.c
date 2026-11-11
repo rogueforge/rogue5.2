@@ -583,7 +583,8 @@ call()
     strcpy(prbuf, elsewise);
     if (get_str(prbuf, stdscr) == NORM)
     {
-	guess[obj->o_which] = malloc((unsigned int) strlen(prbuf) + 1);
+	guess[obj->o_which] = malloc((unsigned int) (strlen(prbuf)
+	    < sizeof (THING) ? sizeof (THING) : strlen(prbuf) + 1));
 	strcpy(guess[obj->o_which], prbuf);
     }
 }

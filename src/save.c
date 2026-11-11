@@ -172,11 +172,7 @@ char **envp;
     /*
      * If a process can be suspended, this code wouldn't work
      */
-# ifdef SIG_HOLD
-    savesig = signal(SIGTSTP, SIG_HOLD);
-# else
     savesig = signal(SIGTSTP, SIG_IGN);
-# endif
 #endif
 
     if ((inf = open(file, 0)) < 0)

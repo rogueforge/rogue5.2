@@ -51,7 +51,7 @@ init_check()
 	exit(1);
     }
     mytty = ttyname(0);
-    if (mytty[8] == 'p')
+    if (mytty != NULL && mytty[8] == 'p')
     {
 	printf("Sorry, you may not play rogue over the network.\n");
 	exit(1);
@@ -182,7 +182,7 @@ too_much()
     loadav(avec);
     return (avec[1] > (MAXLOAD / 10.0));
 #else
-    if (mytty[8] == 'd' && ucount() >= maxusers)
+    if (mytty != NULL && mytty[8] == 'd' && ucount() >= maxusers)
 	return TRUE;
     return FALSE;
 #endif

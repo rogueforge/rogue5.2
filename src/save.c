@@ -39,7 +39,7 @@ over:
 	for (;;)
 	{
 	    msg("save file (%s)? ", file_name);
-	    c = getchar();
+	    c = readchar();
 	    mpos = 0;
 	    if (c == ESCAPE)
 	    {

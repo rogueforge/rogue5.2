@@ -6,6 +6,7 @@
 
 #include <curses.h>
 #include <ctype.h>
+#include <errno.h>
 #include "rogue.h"
 
 /*
@@ -127,8 +128,14 @@ readchar()
 
     fflush(stdout);
     cnt = 0;
+    keep_scr();
     while (read(0, &c, 1) <= 0)
-	if (cnt++ > 100)	/* if we are getting infinite EOFs */
+	if (errno == EINTR)
+	{
+	    errno = 0;
+	    keep_scr();
+	}
+	else if (cnt++ > 100)	/* if we are getting infinite EOFs */
 	    auto_save();	/* save the game */
     return c;
 }
@@ -218,4 +225,56 @@ char *message;
     wait_for(' ');
     clearok(curscr, TRUE);
     touchwin(stdscr);
+}
+
+/*
+ * keep_scr:
+ *	A curses that goes by the window is left with a screen of the
+ *	wrong size when the window changes, and makes it over, empty,
+ *	when the game comes back from a shell or from being stopped.
+ *	Keep the library's screen the size of the window, but no
+ *	smaller than the game's, keep a copy of what is on it, and put
+ *	that back whenever the screen has been made over.  ncurses
+ *	keeps what is on its screen when it changes its size, and
+ *	there this does nothing.  LINES and COLS are the library's
+ *	own from here on.
+ */
+#undef LINES
+#undef COLS
+
+keep_scr()
+{
+    static int ky, kx;
+    register int y, x;
+
+#ifdef NCURSES_VERSION
+    return;
+#endif
+    if (kw == NULL)
+    {
+	kw = newwin(rg_lines, rg_cols, 0, 0);
+	getmaxyx(stdscr, ky, kx);
+    }
+    if (LINES < rg_lines)
+	LINES = rg_lines;
+    if (COLS < rg_cols)
+	COLS = rg_cols;
+    getmaxyx(curscr, y, x);
+    if (y != LINES || x != COLS)
+    {
+	wresize(curscr, LINES, COLS);
+	wresize(stdscr, LINES, COLS);
+	ky = 0;
+    }
+    getmaxyx(stdscr, y, x);
+    if (y == ky && x == kx)
+	overwrite(stdscr, kw);
+    else
+    {
+	overwrite(kw, stdscr);
+	clearok(curscr, TRUE);
+	refresh();
+	ky = y;
+	kx = x;
+    }
 }

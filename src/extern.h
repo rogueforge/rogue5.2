@@ -16,6 +16,10 @@
 #define MAXSTR		80	/* maximum length of strings */
 #define MAXLINES	32	/* maximum number of screen lines used */
 #define MAXCOLS		80	/* maximum number of screen columns used */
+#define LINES		rg_lines	/* the size of the screen, as */
+#define COLS		rg_cols		/* the game was started with */
+
+extern int rg_lines, rg_cols;
 
 #define RN		(((seed = seed*11109+13849) >> 16) & 0xffff)
 
@@ -41,7 +45,7 @@ extern int	a_chances[], a_class[], count, dnum, food_left,
 
 extern long	seed;
 
-extern WINDOW	*hw;
+extern WINDOW	*hw, *kw;
 
 /*
  * Function types

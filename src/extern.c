@@ -93,6 +93,7 @@ int food_left;				/* Amount of food in hero's stomach */
 int group = 2;				/* Current group number */
 int hungry_state = 0;			/* How hungry is he */
 int fd;					/* File descriptor for score file */
+int rg_lines, rg_cols;			/* Size of the screen */
 int a_chances[MAXARMORS] = {		/* Chance for each armor type */
     20,
     35,
@@ -128,6 +129,7 @@ THING *mlist = NULL;			/* List of monsters on the level */
 THING *_monst[MAXLINES*MAXCOLS];	/* Pointers for monsters at each spot */
 
 WINDOW *hw;				/* Used as a scratch window */
+WINDOW *kw;				/* A copy of the screen */
 
 #define INIT_STATS { 16, 0, 1, 10, 12, "1d4", 12 }
 

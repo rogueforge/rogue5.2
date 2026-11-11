@@ -304,6 +304,29 @@ ucount()
 }
 #endif
 
+#if defined(MAXUSERS) && !defined(UCOUNT)
+/*
+ * ucount:
+ *	Count number of users on the system, from the system's own
+ *	record of them
+ */
+#include <utmpx.h>
+
+ucount()
+{
+    register struct utmpx *up;
+    register int count;
+
+    count = 0;
+    setutxent();
+    while ((up = getutxent()) != NULL)
+	if (up->ut_type == USER_PROCESS)
+	    count++;
+    endutxent();
+    return count;
+}
+#endif
+
 /*
  * lock_sc:
  *	lock the score file.  If it takes too long, ask the user if

@@ -261,6 +261,7 @@ WINDOW *win;
     register int i;
     char buf[MAXSTR];
 
+    buf[0] = '\0';
     if ((i = get_str(buf, win)) == NORM)
 	*opt = atoi(buf);
     return i;

@@ -259,7 +259,8 @@ command()
 			{
 			    register THING *item;
 
-			    if ((item = get_item("charge", STICK)) != NULL)
+			    if ((item = get_item("charge", STICK)) != NULL
+				&& item->o_type == STICK)
 				item->o_charges = 10000;
 			}
 			when CTRL('H'):

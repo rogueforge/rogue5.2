@@ -92,6 +92,23 @@ create_obj()
     obj->o_group = 0;
     obj->o_count = 1;
     mpos = 0;
+    switch (obj->o_type)
+    {
+	when POTION: bless = MAXPOTIONS;
+	when SCROLL: bless = MAXSCROLLS;
+	when RING: bless = MAXRINGS;
+	when STICK: bless = MAXSTICKS;
+	when WEAPON: bless = MAXWEAPONS;
+	when ARMOR: bless = MAXARMORS;
+	when FOOD: case GOLD: case AMULET: bless = 16;
+	otherwise: bless = 0;
+    }
+    if (obj->o_which < 0 || obj->o_which >= bless)
+    {
+	msg("there is no such thing");
+	discard(obj);
+	return;
+    }
     if (obj->o_type == WEAPON || obj->o_type == ARMOR)
     {
 	msg("blessing? (+,-,n)");

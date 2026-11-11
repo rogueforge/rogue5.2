@@ -86,6 +86,7 @@ setup()
     int  auto_save(), quit(), endit(), tstp();
 #ifdef CHECKTIME
     int  checkout();
+    sigset_t set;
 #endif
 
     /*
@@ -118,6 +119,9 @@ setup()
 #endif
 #ifdef CHECKTIME
     signal(SIGALRM, checkout);
+    sigemptyset(&set);
+    sigaddset(&set, SIGALRM);
+    sigprocmask(SIG_UNBLOCK, &set, (sigset_t *) NULL);
     alarm(CHECKTIME * 60);
     num_checks = 0;
 #endif
@@ -212,21 +216,25 @@ checkout()
 	"Please save your game.  You have %0.1f minutes",
 	"Last warning.  You have %0.1f minutes to leave",
     };
-    int checktime;
+    int checktime, n;
+    sigset_t set;
 
     signal(SIGALRM, checkout);
+    sigemptyset(&set);
+    sigaddset(&set, SIGALRM);
+    sigprocmask(SIG_UNBLOCK, &set, (sigset_t *) NULL);
     if (too_much())
     {
 	if (author())
 	{
-	    num_checks = 1;
+	    n = num_checks = 1;
 	    chmsg("The load is rather high, O exaulted one");
 	}
-	else if (num_checks++ == 3)
+	else if ((n = ++num_checks) > 3)
 	    fatal("Sorry.  You took too long.  You are dead\n");
-	checktime = (CHECKTIME * 60) / num_checks;
+	checktime = (CHECKTIME * 60) / n;
 	alarm(checktime);
-	chmsg(msgs[num_checks - 1], ((double) checktime / 60.0));
+	chmsg(msgs[n - 1], ((double) checktime / 60.0));
     }
     else
     {

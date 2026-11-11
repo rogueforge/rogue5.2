@@ -200,7 +200,7 @@ passwd()
     msg("wizard's Password:");
     mpos = 0;
     sp = buf;
-    while ((c = getchar()) != '\n' && c != '\r' && c != ESCAPE)
+    while ((c = readchar()) != '\n' && c != '\r' && c != ESCAPE)
 	if (c == killchar())
 	    sp = buf;
 	else if (c == erasechar() && sp > buf)

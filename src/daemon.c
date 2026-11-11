@@ -69,7 +69,8 @@ int (*func)(), arg, type;
 {
     register struct delayed_action *dev;
 
-    dev = d_slot();
+    if ((dev = d_slot()) == NULL)
+	return;
     dev->d_type = type;
     dev->d_func = func;
     dev->d_arg = arg;
@@ -123,7 +124,8 @@ int (*func)(), arg, time, type;
 {
     register struct delayed_action *wire;
 
-    wire = d_slot();
+    if ((wire = d_slot()) == NULL)
+	return;
     wire->d_type = type;
     wire->d_func = func;
     wire->d_arg = arg;

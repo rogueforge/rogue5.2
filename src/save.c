@@ -181,7 +181,7 @@ char **envp;
 	return FALSE;
     }
     fstat(inf, &sbuf2);
-    syml = symlink(file);
+    syml = is_symlink(file);
     if (
 #ifdef WIZARD
 	!wizard &&

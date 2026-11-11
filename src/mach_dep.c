@@ -142,10 +142,10 @@ start_score()
 }
 
 /*
- * symlink:
+ * is_symlink:
  *	See if the file has a symbolic link
  */
-symlink(sp)
+is_symlink(sp)
 char *sp;
 {
 #ifdef S_IFLNK

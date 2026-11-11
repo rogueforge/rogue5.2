@@ -477,10 +477,13 @@ unsigned int size;
 register int inf;
 {
     register char *ep;
-    register int read_size;
+    register int read_size, got = 0;
 
-    if ((read_size = read(inf, start, size)) == -1 || read_size == 0)
-	return read_size;
+    for (read_size = 0; read_size < size; read_size += got)
+	if ((got = read(inf, start + read_size, size - read_size)) <= 0)
+	    break;
+    if (read_size == 0)
+	return got;
 
     ep = encstr;
 
